@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supermemory — The Memory Layer for AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      background: #F5F9FF;
+      color: #0B1015;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ─── THE GRID CONTAINER ───
+       Figma: dashed left/right borders on a 1200px container over #F5F9FF bg.
+       Internal divisions use dashed borders. Solid borders only on boxed sections. */
+    .page-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      border-left: 1px dashed rgba(72,148,224,0.3);
+      border-right: 1px dashed rgba(72,148,224,0.3);
+      background: #F5F9FF;
+    }
+
+    /* ─── NAV (inside the grid) ─── */
+    .g-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 32px;
+      border-bottom: none;
+      background: transparent;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .g-nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 18px;
+      letter-spacing: -0.3px;
+      color: #0B1015;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .g-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .g-nav-links a {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: #0B1015;
+      letter-spacing: -0.15px;
+      line-height: 1.4;
+      white-space: nowrap;
+      transition: opacity 0.2s ease;
+    }
+
+    .g-nav-links a:hover { opacity: 0.7; }
+
+    .g-nav-links .dropdown-arrow {
+      font-size: 10px;
+      margin-left: 2px;
+      opacity: 0.5;
+    }
+
+    .g-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    /* Consumer is part of nav links in Figma, not separate */
+
+    .g-nav-twitter {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: #0B1015;
+      letter-spacing: -0.15px;
+      line-height: 1.4;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .g-nav-twitter:hover { opacity: 0.7; }
+    .g-nav-twitter img { width: 13px; height: 13px; display: block; flex-shrink: 0; }
+
+    .btn-nav {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 10px 24px;
+      border-radius: 0;
+      border: 1px solid rgba(72,148,224,0.3);
+      background: #fafafa;
+      color: #0B0F15;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      letter-spacing: -0.15px;
+      line-height: 1.4;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .btn-nav:hover {
+      border-color: rgba(72,148,224,0.6);
+      background: #f0f4f8;
+    }
+
+    /* ─── BADGE ─── */
+    .g-badge-row {
+      border-bottom: none;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .g-badge {
+      display: inline-flex;
+      align-items: stretch;
+      gap: 0;
+      padding: 0;
+      background: #DEEBFF;
+      border: 1px solid rgba(72,148,224,0.3);
+      border-radius: 0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: #0B1015;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      letter-spacing: -0.15px;
+      line-height: 1.4;
+    }
+
+    .g-badge:hover { border-color: rgba(72,148,224,0.6); }
+
+    .g-badge-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px;
+      border-right: 1px solid rgba(72,148,224,0.3);
+    }
+
+    .g-badge-dot {
+      width: 12px;
+      height: 12px;
+      background: rgba(0,123,255,0.5);
+      border-radius: 0;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .g-badge-dot::after {
+      content: '';
+      position: absolute;
+      top: 2.4px;
+      left: 2.4px;
+      width: 7.2px;
+      height: 7.2px;
+      background: #0553DB;
+    }
+
+    .g-badge-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 10px;
+    }
+
+    .g-badge-text { color: #0B1015; }
+    .g-badge-arrow { color: #0B1015; font-size: 12px; letter-spacing: -0.12px; }
+
+    /* ─── HERO (inside the grid — big centered cell) ─── */
+    .g-hero {
+      padding: 0 64px 32px;
+      text-align: center;
+      border-bottom: none;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .g-hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 64px;
+      font-weight: 500;
+      letter-spacing: -3.2px;
+      line-height: 1.1;
+      color: #0B1015;
+      width: 100%;
+    }
+
+    .g-hero-sub {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: #0B1015;
+      max-width: 764px;
+      line-height: 1.5;
+      letter-spacing: -0.18px;
+    }
+
+    .g-hero-ctas {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    /* Figma: bg #fafafa, border rgba(72,148,224,0.3), 0 radius, w-167px */
+    .btn-primary {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 10px 24px;
+      min-width: 167px;
+      border-radius: 0;
+      border: 1px solid rgba(72,148,224,0.3);
+      background: #fafafa;
+      color: #0B0F15;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: -0.15px;
+      line-height: 1.4;
+    }
+
+    .btn-primary:hover { border-color: rgba(72,148,224,0.6); background: #f0f4f8; }
+
+    .btn-secondary {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 10px 24px;
+      min-width: 167px;
+      border-radius: 0;
+      border: 1px solid rgba(72,148,224,0.3);
+      background: #fafafa;
+      color: #0B1015;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: -0.15px;
+      line-height: 1.4;
+    }
+
+    .btn-secondary:hover { border-color: rgba(72,148,224,0.6); background: #f0f4f8; }
+
+    /* ─── BLUE HERO VISUAL (full-width band with dot pattern + logo) ─── */
+    .g-blue-hero {
+      background-color: #0563F0;
+      background-image: radial-gradient(rgba(255,255,255,0.12) 1px, transparent 1px);
+      background-size: 20px 20px;
+      height: 560px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .g-blue-hero-icon {
+      color: rgba(255,255,255,0.25);
+      font-size: 160px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      line-height: 1;
+      user-select: none;
+    }
+
+    /* ─── STATS ROW (horizontal cells under hero) ─── */
+    .g-stats-row {
+      display: none; /* Removed — not in Figma design, stats live inside product cards */
+    }
+
+    .g-stat {
+      padding: 24px 32px;
+      border-right: 1px dashed rgba(72,148,224,0.3);
+      text-align: center;
+    }
+
+    .g-stat:last-child { border-right: none; }
+
+    .g-stat-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      color: #0B1015;
+    }
+
+    .g-stat-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #888E94;
+      margin-top: 4px;
+    }
+
+    /* ─── TRUST LOGOS ─── */
+    /* Figma: wrapped in solid #9ec7ef border, inside a pt-128px pb-64px container */
+    .g-trust-wrapper {
+      padding: 128px 0 64px;
+    }
+
+    .g-trust {
+      border: 1px solid #9EC7EF;
+      padding: 56px 0;
+    }
+
+    .g-trust-header {
+      padding: 16px 0;
+      border-top: 1px dashed rgba(72,148,224,0.3);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: #0B1015;
+      text-align: center;
+      letter-spacing: -0.18px;
+      line-height: 1.4;
+    }
+
+    .g-trust-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+    }
+
+    .g-trust-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 88px;
+      border-right: 1px dashed rgba(72,148,224,0.3);
+      border-top: 1px dashed rgba(72,148,224,0.3);
+      overflow: hidden;
+    }
+
+    .g-trust-cell:nth-child(6n) { border-right: none; }
+
+    .g-trust-row-2 {
+      border-top: 1px dashed rgba(72,148,224,0.3);
+      border-bottom: 1px dashed rgba(72,148,224,0.3);
+    }
+
+    .g-trust-cell img {
+      height: 28px;
+      width: auto;
+      object-fit: contain;
+      opacity: 1;
+      transition: opacity 0.2s ease;
+    }
+
+    .g-trust-cell img:hover { opacity: 0.7; }
+
+    /* ─── SECTION LABEL ─── */
+    .g-section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.36px;
+      color: #1F78FF;
+    }
+
+    /* ─── MANIFESTO + PRODUCTS CONTAINER ─── */
+    /* Figma: manifesto + products are in one bordered container */
+    .g-manifesto-products {
+      border: 1px solid #9EC7EF;
+    }
+
+    .g-manifesto {
+      padding: 80px 64px;
+      text-align: center;
+      border-bottom: 1px dashed rgba(72,148,224,0.3);
+      background: transparent;
+    }
+
+    .g-manifesto h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 56px;
+      font-weight: 500;
+      letter-spacing: -2.8px;
+      line-height: 1.1;
+      color: #0B1015;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* ─── PRODUCTS SPLIT (2-col grid, each with sub-grids) ─── */
+    .g-products {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .g-product {
+      background: linear-gradient(to bottom, #D6E9FF, #F4F9FF);
+    }
+
+    .g-product:first-child {
+      border-right: 1px dashed rgba(72,148,224,0.3);
+    }
+
+    .g-product-header {
+      padding: 32px 32px 0;
+    }
+
+    .g-product-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.36px;
+      color: #1F78FF;
+      margin-bottom: 12px;
+    }
+
+    .g-product-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 500;
+      color: #0B1015;
+      letter-spacing: -1.3px;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .g-product-desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: #888E94;
+      line-height: 1.6;
+      letter-spacing: -0.15px;
+      margin-bottom: 16px;
+    }
+
+    .g-product-cta {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: #1F78FF;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 24px;
+      transition: gap 0.2s ease;
+    }
+
+    .g-product-cta:hover { gap: 8px; }
+
+    /* Enterprise sub-grid */
+    .g-ent-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .g-ent-cell {
+      border-top: 1px dashed rgba(72,148,224,0.3);
+      border-right: 1px dashed rgba(72,148,224,0.3);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100px;
+    }
+
+    .g-ent-cell:nth-child(2n) { border-right: none; }
+
+    .g-ent-cell-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      color: #0B1015;
+    }
+
+    .g-ent-cell-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #888E94;
+      margin-top: 4px;
+    }
+
+    .g-ent-cell-inline {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #0B1015;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .g-ent-cell-inline svg {
+      width: 18px;
+      height: 18px;
+      color: #1F78FF;
+      flex-shrink: 0;
+    }
+
+    .g-ent-full {
+      grid-column: 1 / -1;
+      border-right: none;
+    }
+
+    /* Plugins sub-grid */
+    .g-plug-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .g-plug-cell {
+      border-top: 1px dashed rgba(72,148,224,0.3);
+      border-right: 1px dashed rgba(72,148,224,0.3);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 100px;
+    }
+
+    .g-plug-cell:nth-child(3n) { border-right: none; }
+
+    .g-plug-cell img {
+      height: 36px;
+      width: 36px;
+      border-radius: 0;
+      object-fit: contain;
+    }
+
+    .g-plug-cell-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: #888E94;
+      text-align: center;
+    }
+
+    .g-plug-stat {
+      border-top: 1px dashed rgba(72,148,224,0.3);
+      padding: 20px;
+      text-align: center;
+    }
+
+    /* ─── HOW IT WORKS (4-col grid row) ─── */
+    .g-how-label {
+      padding: 16px 32px;
+      border-bottom: 1px dashed rgba(72,148,224,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .g-how-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 500;
+      color: #0B1015;
+      letter-spacing: -0.5px;
+    }
+
+    .g-how-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-bottom: 1px dashed rgba(72,148,224,0.3);
+    }
+
+    .g-how-cell {
+      padding: 28px 24px;
+      border-right: 1px dashed rgba(72,148,224,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .g-how-cell:last-child { border-right: none; }
+
+    .g-how-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 0;
+      background: transparent;
+      border: 1px solid #9EC7EF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      color: #1F78FF;
+      margin-bottom: 16px;
+      flex-shrink: 0;
+    }
+
+    .g-how-cell-icon {
+      width: 32px;
+      height: 32px;
+      color: #1F78FF;
+      margin-bottom: 16px;
+    }
+
+    .g-how-cell-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: #0B1015;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+
+    .g-how-cell-body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #888E94;
+      line-height: 1.6;
+    }
+
+    /* ─── TWEETS (3-col grid row) ─── */
+    .g-tweets {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-bottom: 1px dashed rgba(72,148,224,0.3);
+    }
+
+    .g-tweet {
+      padding: 28px;
+      border-right: 1px dashed rgba(72,148,224,0.3);
+      background: #fff;
+      position: relative;
+    }
+
+    .g-tweet:last-child { border-right: none; }
+
+    .g-tweet-x {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 14px;
+      height: 14px;
+      color: #888E94;
+    }
+
+    .g-tweet-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .g-tweet-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 0;
+      background: #0B1015;
+      flex-shrink: 0;
+    }
+
+    .g-tweet-name {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: #0B1015;
+    }
+
+    .g-tweet-handle {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #888E94;
+    }
+
+    .g-tweet-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #0B1015;
+      line-height: 1.6;
+    }
+
+    /* ─── NEWS (3-col grid row) ─── */
+    .g-news-label {
+      padding: 16px 32px;
+      border-bottom: 1px dashed rgba(72,148,224,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .g-news {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-bottom: 1px dashed rgba(72,148,224,0.3);
+    }
+
+    .g-news-card {
+      padding: 28px;
+      border-right: 1px dashed rgba(72,148,224,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .g-news-card:last-child { border-right: none; }
+
+    .g-news-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      color: #1F78FF;
+      letter-spacing: 0.36px;
+      margin-bottom: 10px;
+    }
+
+    .g-news-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: #0B1015;
+      letter-spacing: -0.5px;
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+
+    .g-news-meta {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #888E94;
+      margin-bottom: 12px;
+    }
+
+    .g-news-link {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #1F78FF;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: auto;
+      transition: gap 0.2s ease;
+    }
+
+    .g-news-link:hover { gap: 8px; }
+
+    /* ─── PRICING (3-col grid row) ─── */
+    .g-pricing-label {
+      padding: 16px 32px;
+      border-bottom: 1px dashed rgba(72,148,224,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .g-pricing-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 500;
+      color: #0B1015;
+      letter-spacing: -0.5px;
+    }
+
+    .g-pricing {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-bottom: 1px dashed rgba(72,148,224,0.3);
+    }
+
+    .g-price-col {
+      padding: 32px;
+      border-right: 1px dashed rgba(72,148,224,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .g-price-col:last-child { border-right: none; }
+
+    .g-price-col.featured {
+      background: transparent;
+    }
+
+    .g-price-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      color: #1F78FF;
+      letter-spacing: 0.36px;
+      margin-bottom: 12px;
+    }
+
+    .g-price-amount {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 44px;
+      font-weight: 700;
+      color: #0B1015;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+
+    .g-price-pro {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 6px;
+      background: transparent;
+      border: 1px solid #9EC7EF;
+      border-radius: 0;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: #1F78FF;
+      margin-left: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .g-price-desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #888E94;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      letter-spacing: -0.14px;
+    }
+
+    .g-price-features {
+      list-style: none;
+      margin-bottom: 24px;
+      flex-grow: 1;
+    }
+
+    .g-price-features li {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #0B1015;
+      line-height: 1.5;
+      padding: 6px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .g-price-features li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      top: 6px;
+      font-size: 10px;
+      color: #1F78FF;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .btn-full {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .g-pricing-footer {
+      padding: 12px 32px;
+      border-bottom: 1px dashed rgba(72,148,224,0.3);
+      text-align: center;
+    }
+
+    .g-pricing-footer a {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #1F78FF;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: gap 0.2s ease;
+    }
+
+    .g-pricing-footer a:hover { gap: 8px; }
+
+    /* ─── FOOTER (inside the grid — dark) ─── */
+    .g-footer {
+      background: #0B1015;
+      padding: 48px 32px 24px;
+    }
+
+    .g-footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 40px;
+    }
+
+    .g-footer-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .g-footer-logo .logo-icon { color: #3478F6; }
+
+    .g-footer-col-title {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #6B7280;
+      margin-bottom: 14px;
+    }
+
+    .g-footer-col a {
+      display: block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #9CA3AF;
+      padding: 3px 0;
+      transition: color 0.2s ease;
+    }
+
+    .g-footer-col a:hover { color: #fff; }
+
+    .g-footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .g-footer-copy {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #6B7280;
+    }
+
+    .g-footer-copy a {
+      color: #6B7280;
+      transition: color 0.2s ease;
+    }
+
+    .g-footer-copy a:hover { color: #9CA3AF; }
+
+    .g-footer-socials {
+      display: flex;
+      gap: 8px;
+    }
+
+    .g-footer-social {
+      width: 32px;
+      height: 32px;
+      border-radius: 0;
+      background: rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9CA3AF;
+      transition: all 0.2s ease;
+    }
+
+    .g-footer-social:hover {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+    }
+
+    .g-footer-social svg { width: 16px; height: 16px; }
+
+    /* ─── MOBILE NAV ─── */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .mobile-menu-btn span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: #0B1015;
+      border-radius: 1px;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .page-grid {
+        border-left: none;
+        border-right: none;
+      }
+
+      .g-hero h1 { font-size: 48px; letter-spacing: -2.4px; }
+      .g-manifesto h2 { font-size: 42px; letter-spacing: -2.1px; }
+      .g-blue-hero { height: 300px; }
+      .g-blue-hero-icon { font-size: 140px; }
+
+      .g-nav-links { display: none; }
+      .mobile-menu-btn { display: flex; }
+
+      .g-trust-wrapper { padding: 64px 0 32px; }
+      .g-trust-grid { grid-template-columns: repeat(4, 1fr); }
+
+      .g-products { grid-template-columns: 1fr; }
+      .g-product:first-child { border-right: none; border-bottom: 1px dashed rgba(72,148,224,0.3); }
+
+      .g-how-grid { grid-template-columns: 1fr 1fr; }
+      .g-how-cell:nth-child(2) { border-right: none; }
+      .g-how-cell:nth-child(-n+2) { border-bottom: 1px dashed rgba(72,148,224,0.3); }
+      .g-how-cell:nth-child(4) { border-right: none; }
+
+      .g-tweets { grid-template-columns: 1fr; }
+      .g-tweet { border-right: none; border-bottom: 1px dashed rgba(72,148,224,0.3); }
+      .g-tweet:last-child { border-bottom: none; }
+
+      .g-news { grid-template-columns: 1fr; }
+      .g-news-card { border-right: none; border-bottom: 1px dashed rgba(72,148,224,0.3); }
+      .g-news-card:last-child { border-bottom: none; }
+
+      .g-pricing { grid-template-columns: 1fr; }
+      .g-price-col { border-right: none; border-bottom: 1px dashed rgba(72,148,224,0.3); }
+      .g-price-col:last-child { border-bottom: none; }
+
+      .g-footer-top { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .g-nav { padding: 16px 20px; }
+      .g-hero { padding: 48px 24px 40px; }
+      .g-hero h1 { font-size: 36px; letter-spacing: -1.8px; }
+      .g-blue-hero { height: 240px; }
+      .g-blue-hero-icon { font-size: 100px; }
+      .g-hero-sub { font-size: 16px; }
+      .g-hero-ctas { flex-direction: column; }
+      .g-manifesto { padding: 48px 24px; }
+      .g-manifesto h2 { font-size: 32px; letter-spacing: -1.6px; }
+
+      .g-trust-wrapper { padding: 48px 0 24px; }
+      .g-trust-grid { grid-template-columns: repeat(3, 1fr); }
+
+      .g-how-grid { grid-template-columns: 1fr; }
+      .g-how-cell { border-right: none; border-bottom: 1px dashed rgba(72,148,224,0.3); }
+      .g-how-cell:last-child { border-bottom: none; }
+
+      .g-ent-grid { grid-template-columns: 1fr; }
+      .g-ent-cell { border-right: none; }
+      .g-plug-grid { grid-template-columns: 1fr 1fr 1fr; }
+
+      .g-footer-top { grid-template-columns: 1fr; gap: 24px; }
+      .g-footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+    }
+
+    @media (max-width: 480px) {
+      .g-hero h1 { font-size: 30px; letter-spacing: -1.5px; }
+      .g-stat-value { font-size: 28px; }
+      .g-price-amount { font-size: 36px; }
+      .g-product-header { padding: 24px 24px 0; }
+      .g-how-cell, .g-tweet, .g-news-card, .g-price-col { padding: 20px; }
+      .g-plug-grid { grid-template-columns: 1fr; }
+      .g-plug-cell { border-right: none; }
+    }
+  </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body>
+
+  <!-- ─── EVERYTHING IN ONE GRID CONTAINER ─── -->
+  <div class="page-grid">
+
+    <!-- NAV -->
+    <nav class="g-nav">
+      <a href="index.html" class="g-nav-logo">supermemory</a>
+      <ul class="g-nav-links">
+        <li><a href="#">Research</a></li>
+        <li><a href="#">Use cases <span class="dropdown-arrow">▾</span></a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="https://docs.supermemory.ai">Docs</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Consumer</a></li>
+      </ul>
+      <div class="g-nav-right">
+        <a href="#" class="g-nav-twitter">
+          <img src="https://www.figma.com/api/mcp/asset/87941a50-79db-4939-bbb4-9a4df2fc2c4c" alt="X">
+          20K
+        </a>
+        <a href="plugins.html" class="btn-nav" style="text-decoration:none;">Try for free &rarr;</a>
+      </div>
+      <button class="mobile-menu-btn" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+
+    <!-- HERO CONTENT AREA -->
+    <div style="padding: 144px 0 0; display:flex; flex-direction:column; align-items:center; gap:32px;">
+
+      <!-- BADGE -->
+      <div class="g-badge-row">
+        <a href="#" class="g-badge">
+          <span class="g-badge-left">
+            <span class="g-badge-dot"></span>
+            <span style="font-weight:500;color:#0B1015">Research</span>
+          </span>
+          <span class="g-badge-right">
+            <span class="g-badge-text">Supermemory is now the best memory provider (Benchmark)</span>
+            <span class="g-badge-arrow">&rarr;</span>
+          </span>
+        </a>
+      </div>
+
+      <!-- HERO -->
+      <section class="g-hero">
+        <h1>The memory layer<br>for AI agents</h1>
+        <p class="g-hero-sub">Supermemory gives your agents state-of-the-art memory, RAG, user profiles, connectors, and extractors &mdash; all built in. Extremely low latency. Works with any model.</p>
+        <div class="g-hero-ctas">
+          <a href="enterprise.html" class="btn-primary" style="text-decoration:none;">Setup in 5 mins</a>
+          <a href="#" class="btn-secondary" style="text-decoration:none;">Talk to founder &rarr;</a>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- BLUE HERO VISUAL -->
+    <div class="g-blue-hero">
+      <span class="g-blue-hero-icon">✳</span>
+    </div>
+
+    <!-- TRUST LOGOS -->
+    <div class="g-trust-wrapper">
+      <div class="g-trust">
+        <div class="g-trust-header">Trusted by developers, enterprises and AI agents</div>
+        <div class="g-trust-grid">
+        <div class="g-trust-cell"><img src="https://www.figma.com/api/mcp/asset/17ee1db8-42d1-47d3-98de-80cd4fca7442" alt="Caret"></div>
+        <div class="g-trust-cell"><img src="https://www.figma.com/api/mcp/asset/19f3a702-9cda-4fe7-a009-6bafe67b0d82" alt="Composio"></div>
+        <div class="g-trust-cell"><img src="https://www.figma.com/api/mcp/asset/2daaaeac-b98c-44c7-8a83-912b26b8f94f" alt="Cluely"></div>
+        <div class="g-trust-cell"><img src="https://www.figma.com/api/mcp/asset/d090e42a-70bb-4f17-9a09-914f95f8b46a" alt="Montra"></div>
+        <div class="g-trust-cell"><img src="https://www.figma.com/api/mcp/asset/351dd9bb-b5b6-48e2-9ef3-f16aeb6d79a8" alt="Motion"></div>
+        <div class="g-trust-cell"><img src="https://www.figma.com/api/mcp/asset/2c9ddded-5b1b-4a24-b0e3-fa15c064b876" alt="MedTech Vendors"></div>
+        <div class="g-trust-cell"><img src="https://www.figma.com/api/mcp/asset/0b495eee-98af-449f-bafa-8b47d3fd69c9" alt="perspective"></div>
+        <div class="g-trust-cell"><img src="https://www.figma.com/api/mcp/asset/4ca4e82c-393e-4876-bff9-2c6c37f648c0" alt="SlothMD"></div>
+        <div class="g-trust-cell"><img src="https://www.figma.com/api/mcp/asset/2f32a5d3-3247-4d2f-8c4e-be3db894bcfd" alt="scira"></div>
+        <div class="g-trust-cell"><img src="https://www.figma.com/api/mcp/asset/1c549d07-0581-4cf4-9d2b-eb5c291e8b2c" alt="mixus"></div>
+        <div class="g-trust-cell"><img src="https://www.figma.com/api/mcp/asset/6cd71614-18c9-4769-b576-e97547e39ce5" alt="ASU"></div>
+        <div class="g-trust-cell"><img src="https://www.figma.com/api/mcp/asset/1a92a034-1530-4844-94a2-74a7e6af4b1b" alt="P icon"></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- MANIFESTO + PRODUCTS CONTAINER -->
+    <div class="g-manifesto-products">
+
+    <!-- MANIFESTO -->
+    <section class="g-manifesto">
+      <h2>Your AI isn&rsquo;t intelligent<br>until it remembers</h2>
+    </section>
+
+    <!-- TWO PRODUCTS SPLIT -->
+    <div class="g-products">
+
+      <!-- ENTERPRISE -->
+      <div class="g-product">
+        <div class="g-product-header">
+          <div class="g-product-label">ENTERPRISE</div>
+          <h3 class="g-product-title">Ship AI products at enterprise scale</h3>
+          <p class="g-product-desc">Deploy on your cloud, comply with regulations, and manage millions of users with full observability.</p>
+          <a href="enterprise.html" class="g-product-cta">Supermemory for Enterprise &rarr;</a>
+        </div>
+        <div class="g-ent-grid">
+          <div class="g-ent-cell">
+            <div class="g-ent-cell-value">&lt;300ms</div>
+            <div class="g-ent-cell-label">p95 latency</div>
+          </div>
+          <div class="g-ent-cell">
+            <div class="g-ent-cell-inline">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              Custom connectors
+            </div>
+          </div>
+          <div class="g-ent-cell">
+            <div class="g-ent-cell-value">5B+</div>
+            <div class="g-ent-cell-label">tokens processed daily</div>
+          </div>
+          <div class="g-ent-cell">
+            <div class="g-ent-cell-inline">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              On-prem or hybrid
+            </div>
+          </div>
+          <div class="g-ent-cell g-ent-full">
+            <div class="g-ent-cell-inline">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              SOC Type II
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLUGINS -->
+      <div class="g-product">
+        <div class="g-product-header">
+          <div class="g-product-label">PROSUMERS</div>
+          <h3 class="g-product-title">Give your AI a personal memory</h3>
+          <p class="g-product-desc">Power up ChatGPT, Claude, Cursor, and 100+ apps with OpenClaw plugins and a personal knowledge layer.</p>
+          <a href="plugins.html" class="g-product-cta">Supermemory for Prosumers &rarr;</a>
+        </div>
+        <div class="g-plug-grid">
+          <div class="g-plug-cell">
+            <img src="https://www.figma.com/api/mcp/asset/d22062aa-d8c1-4c07-8a14-b52d517c261f" alt="OpenClaw">
+            <span class="g-plug-cell-label">OpenClaw Plugin</span>
+          </div>
+          <div class="g-plug-cell">
+            <img src="https://www.figma.com/api/mcp/asset/3a60b543-2cf5-4779-8a57-34a4d1b78235" alt="Claude Code">
+            <span class="g-plug-cell-label">Claude Code Plugin</span>
+          </div>
+          <div class="g-plug-cell">
+            <img src="https://www.figma.com/api/mcp/asset/c831d077-e934-4887-b46c-05c396426c90" alt="OpenCode">
+            <span class="g-plug-cell-label">OpenCode Plugin</span>
+          </div>
+        </div>
+        <div class="g-plug-stat">
+          <div class="g-ent-cell-value">10,000+</div>
+          <div class="g-ent-cell-label">developers &amp; power users</div>
+        </div>
+      </div>
+
+    </div>
+
+    </div><!-- end .g-manifesto-products -->
+
+    <!-- HOW IT WORKS -->
+    <div class="g-how-label">
+      <span class="g-section-label">HOW IT WORKS</span>
+      <span class="g-how-title">Four ways to add memory</span>
+    </div>
+    <div class="g-how-grid">
+      <div class="g-how-cell">
+        <svg class="g-how-cell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="16 18 22 12 16 6"></polyline>
+          <polyline points="8 6 2 12 8 18"></polyline>
+        </svg>
+        <div class="g-how-cell-title">AI Tool Plugins</div>
+        <div class="g-how-cell-body">Native plugins for Claude Code, Cursor, Windsurf, and more. Install once &mdash; memory syncs across every tool.</div>
+      </div>
+      <div class="g-how-cell">
+        <svg class="g-how-cell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+        <div class="g-how-cell-title">Chrome Extension</div>
+        <div class="g-how-cell-body">Save anything from the web to your memory. Articles, docs, conversations &mdash; one click to remember.</div>
+      </div>
+      <div class="g-how-cell">
+        <svg class="g-how-cell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </svg>
+        <div class="g-how-cell-title">Connections</div>
+        <div class="g-how-cell-body">Connect Notion, Slack, Google Drive, and more. Your existing knowledge flows into your memory layer automatically.</div>
+      </div>
+      <div class="g-how-cell">
+        <svg class="g-how-cell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="4 17 10 11 4 5"></polyline>
+          <line x1="12" y1="19" x2="20" y2="19"></line>
+        </svg>
+        <div class="g-how-cell-title">API &amp; SDK</div>
+        <div class="g-how-cell-body">Full REST API and TypeScript/Python SDKs for building memory into your products. Setup in 5 minutes.</div>
+      </div>
+    </div>
+
+    <!-- TWEETS -->
+    <div class="g-tweets">
+      <div class="g-tweet">
+        <svg class="g-tweet-x" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        <div class="g-tweet-header">
+          <div class="g-tweet-avatar"></div>
+          <div>
+            <div class="g-tweet-name">Dhravya Shah</div>
+            <div class="g-tweet-handle">@dhravya</div>
+          </div>
+        </div>
+        <p class="g-tweet-text">I installed supermemory for Claude Code and I'm SOLD. My context persists across sessions &mdash; it literally remembers what I was working on yesterday.</p>
+      </div>
+      <div class="g-tweet">
+        <svg class="g-tweet-x" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        <div class="g-tweet-header">
+          <div class="g-tweet-avatar"></div>
+          <div>
+            <div class="g-tweet-name">Alex Johnson</div>
+            <div class="g-tweet-handle">@alexj_dev</div>
+          </div>
+        </div>
+        <p class="g-tweet-text">We switched our RAG pipeline to supermemory. &lt;300ms retrieval, handles millions of user profiles, and we deployed on our own cloud. Enterprise AI memory, solved.</p>
+      </div>
+      <div class="g-tweet">
+        <svg class="g-tweet-x" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        <div class="g-tweet-header">
+          <div class="g-tweet-avatar"></div>
+          <div>
+            <div class="g-tweet-name">Sarah Chen</div>
+            <div class="g-tweet-handle">@sarahcodes</div>
+          </div>
+        </div>
+        <p class="g-tweet-text">The fact that what I teach Claude Code automatically shows up in my Cursor context is insane. This is what cross-agent memory should feel like.</p>
+      </div>
+    </div>
+
+    <!-- NEWS -->
+    <div class="g-news-label">
+      <span class="g-section-label">WHAT'S NEW</span>
+      <span class="g-how-title">Latest updates</span>
+    </div>
+    <div class="g-news">
+      <div class="g-news-card">
+        <div class="g-news-tag">BLOG</div>
+        <h3 class="g-news-title">Why every AI agent needs a memory layer</h3>
+        <div class="g-news-meta">Feb 24, 2026</div>
+        <a href="#" class="g-news-link">Read post &rarr;</a>
+      </div>
+      <div class="g-news-card">
+        <div class="g-news-tag">BENCHMARK</div>
+        <h3 class="g-news-title">Supermemory tops memory retrieval benchmarks</h3>
+        <div class="g-news-meta">Feb 20, 2026</div>
+        <a href="#" class="g-news-link">See results &rarr;</a>
+      </div>
+      <div class="g-news-card">
+        <div class="g-news-tag">OPEN SOURCE</div>
+        <h3 class="g-news-title">supermemory/sdk &mdash; now on GitHub</h3>
+        <div class="g-news-meta">&#11088; 2.4k stars</div>
+        <a href="#" class="g-news-link">View repo &rarr;</a>
+      </div>
+    </div>
+
+    <!-- PRICING -->
+    <div class="g-pricing-label" id="pricing">
+      <span class="g-section-label">PRICING</span>
+      <span class="g-pricing-title">Simple, transparent pricing</span>
+    </div>
+    <div class="g-pricing">
+      <div class="g-price-col featured">
+        <div class="g-price-label">Plugins</div>
+        <div style="display:flex;align-items:baseline;">
+          <span class="g-price-amount">Free</span>
+          <span class="g-price-pro">Pro $19/mo</span>
+        </div>
+        <p class="g-price-desc">Cross-agent memory for Claude Code, Cursor &amp; Windsurf</p>
+        <ul class="g-price-features">
+          <li>Memory syncs across all AI coding tools</li>
+          <li>Personal knowledge layer</li>
+          <li>Chrome extension included</li>
+          <li>Pro: unlimited memories &amp; priority sync</li>
+        </ul>
+        <a href="plugins.html" class="btn-primary btn-full" style="text-decoration:none;">Install Free &rarr;</a>
+      </div>
+      <div class="g-price-col">
+        <div class="g-price-label">Nova <span style="font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;text-transform:none;letter-spacing:0;color:#888E94;margin-left:4px;">Coming soon</span></div>
+        <div style="display:flex;align-items:baseline;">
+          <span class="g-price-amount">Free</span>
+          <span class="g-price-pro">Pro $9/mo</span>
+        </div>
+        <p class="g-price-desc">Your AI second brain &mdash; save, search, recall</p>
+        <ul class="g-price-features">
+          <li>Save anything from the web</li>
+          <li>AI-powered search &amp; retrieval</li>
+          <li>Organize with collections</li>
+          <li>Share with your team</li>
+        </ul>
+        <button class="btn-secondary btn-full">Join Waitlist</button>
+      </div>
+      <div class="g-price-col">
+        <div class="g-price-label">Enterprise</div>
+        <div style="display:flex;align-items:baseline;">
+          <span class="g-price-amount">Custom</span>
+        </div>
+        <p class="g-price-desc">Memory infrastructure deployed on your cloud</p>
+        <ul class="g-price-features">
+          <li>Self-hosted or hybrid deployment</li>
+          <li>SOC Type II compliant</li>
+          <li>Custom connectors &amp; extractors</li>
+          <li>Dedicated support &amp; SLA</li>
+          <li>Unlimited tokens</li>
+        </ul>
+        <a href="enterprise.html" class="btn-secondary btn-full" style="text-decoration:none;">Talk to Sales &rarr;</a>
+      </div>
+    </div>
+    <div class="g-pricing-footer">
+      <a href="#">See detailed pricing &rarr;</a>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="g-footer">
+      <div class="g-footer-top">
+        <div>
+          <div class="g-footer-logo"><span class="logo-icon">✳</span> supermemory<span style="font-size:11px;vertical-align:super;color:#6B7280;font-weight:400;">™</span></div>
+        </div>
+        <div class="g-footer-col">
+          <div class="g-footer-col-title">Products</div>
+          <a href="enterprise.html">Enterprise</a>
+          <a href="plugins.html">Plugins</a>
+          <a href="#">Nova</a>
+          <a href="#">Pricing</a>
+        </div>
+        <div class="g-footer-col">
+          <div class="g-footer-col-title">Resources</div>
+          <a href="https://docs.supermemory.ai">Docs</a>
+          <a href="#">Blog</a>
+          <a href="#">Research</a>
+          <a href="#">Changelog</a>
+          <a href="https://github.com/supermemory">GitHub</a>
+        </div>
+        <div class="g-footer-col">
+          <div class="g-footer-col-title">Company</div>
+          <a href="#">About</a>
+          <a href="#">Careers</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+      <div class="g-footer-bottom">
+        <div class="g-footer-copy">&copy; 2026 Supermemory &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></div>
+        <div class="g-footer-socials">
+          <a href="#" class="g-footer-social">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="#" class="g-footer-social">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+          <a href="#" class="g-footer-social">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- end .page-grid -->
+
+</body>
+</html>

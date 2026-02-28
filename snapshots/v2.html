@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supermemory — The Context Engineering Infrastructure for AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      background: #F5F9FF;
+      color: #0B1015;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      height: 89px;
+      display: flex;
+      align-items: center;
+      padding: 24px 32px;
+      background: #F5F9FF;
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      color: #0B1015;
+    }
+
+    .nav-logo .logo-icon {
+      color: #3478F6;
+      font-size: 22px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: #0B1015;
+      transition: opacity 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      opacity: 0.7;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-shrink: 0;
+    }
+
+    .nav-twitter {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #0B1015;
+    }
+
+    .nav-twitter svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn-nav {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 10px 22px;
+      border-radius: 100px;
+      border: 1px solid #D1D5DB;
+      background: transparent;
+      color: #0B1015;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav:hover {
+      background: #0B1015;
+      color: #fff;
+      border-color: #0B1015;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      text-align: center;
+      padding: 80px 32px 52px;
+      background: #F5F9FF;
+    }
+
+    .hero-content {
+      max-width: 984px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px;
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 100px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #0B1015;
+      margin-bottom: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .hero-badge:hover {
+      border-color: #3478F6;
+    }
+
+    .hero-badge-dot {
+      width: 12px;
+      height: 12px;
+      background: #3478F6;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .hero-badge-divider {
+      width: 1px;
+      height: 14px;
+      background: #E2E8F0;
+    }
+
+    .hero-badge-text {
+      color: #4A5568;
+    }
+
+    .hero-badge-arrow {
+      color: #3478F6;
+      font-size: 14px;
+    }
+
+    .hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 64px;
+      font-weight: 500;
+      letter-spacing: -3.2px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      color: #0B1015;
+      text-align: center;
+    }
+
+    .hero p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: #0B1015;
+      max-width: 764px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .btn-primary {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 10px 30px;
+      height: 41px;
+      border-radius: 100px;
+      border: none;
+      background: #0B1015;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    .btn-secondary {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 10px 24px;
+      height: 41px;
+      border-radius: 100px;
+      border: 1px solid #D1D5DB;
+      background: transparent;
+      color: #0B1015;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-secondary:hover {
+      border-color: #0B1015;
+    }
+
+    /* ─── BLUE HERO SECTION ─── */
+    .blue-hero {
+      width: 100%;
+      max-width: 1440px;
+      margin: 0 auto;
+      height: 561px;
+      background-color: #0563F0;
+      background-image:
+        radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px);
+      background-size: 20px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .blue-hero-icon {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 120px;
+      color: #fff;
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    /* ─── TRUST BAR ─── */
+    .trust-section {
+      padding: 128px 32px 64px;
+      background: #F5F9FF;
+    }
+
+    .trust-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      border: 1px solid #9EC7EF;
+      position: relative;
+    }
+
+    .trust-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: #0B1015;
+      text-align: center;
+      padding: 16px;
+      border-bottom: 1px dashed rgba(72,148,224,0.3);
+    }
+
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+    }
+
+    .trust-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 88px;
+      border-right: 1px dashed rgba(72,148,224,0.3);
+      border-bottom: 1px dashed rgba(72,148,224,0.3);
+    }
+
+    .trust-cell:nth-child(6n) {
+      border-right: none;
+    }
+
+    .trust-cell:nth-child(n+7) {
+      border-bottom: none;
+    }
+
+    .trust-cell img {
+      height: 28px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    /* ─── MANIFESTO HEADLINE ─── */
+    .manifesto-section {
+      padding: 64px 32px;
+      background: #F5F9FF;
+    }
+
+    .manifesto-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      border: 1px solid #9EC7EF;
+      border-bottom: none;
+    }
+
+    .manifesto-container h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px;
+      font-weight: 500;
+      color: #0B1015;
+      letter-spacing: -2.6px;
+      line-height: 1.1;
+      text-align: center;
+      padding: 64px 32px;
+    }
+
+    /* ─── TWO CARDS ─── */
+    .cards-section {
+      background: #F5F9FF;
+    }
+
+    .cards-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      border: 1px solid #9EC7EF;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #fff;
+    }
+
+    .card {
+      background: linear-gradient(to bottom, #D6E9FF, #F4F9FF);
+      padding: 40px;
+    }
+
+    .card:first-child {
+      border-right: 1px dashed rgba(72,148,224,0.3);
+    }
+
+    .card-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.36px;
+      color: #1F78FF;
+      margin-bottom: 16px;
+    }
+
+    .card-headline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 500;
+      color: #0B1015;
+      letter-spacing: -1.4px;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .card-body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      color: #888E94;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .card-cta {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      color: #1F78FF;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 32px;
+      transition: gap 0.2s ease;
+    }
+
+    .card-cta:hover {
+      gap: 8px;
+    }
+
+    /* ─── STATS GRID (Enterprise card) ─── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .stat-cell {
+      border: 1px dashed rgba(72,148,224,0.3);
+      padding: 20px;
+      margin-right: -1px;
+      margin-bottom: -1px;
+    }
+
+    .stat-cell-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 40px;
+      font-weight: 700;
+      color: #0B1015;
+      letter-spacing: -1px;
+      line-height: 1.1;
+    }
+
+    .stat-cell-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #888E94;
+      margin-top: 4px;
+    }
+
+    .stat-cell-inline {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #0B1015;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-cell-inline svg {
+      width: 18px;
+      height: 18px;
+      color: #1F78FF;
+      flex-shrink: 0;
+    }
+
+    .stat-cell.tall {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 112px;
+    }
+
+    /* ─── PLUGIN GRID (Prosumers card) ─── */
+    .plugin-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .plugin-cell {
+      border: 1px dashed rgba(72,148,224,0.3);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-right: -1px;
+      margin-bottom: -1px;
+      height: 88px;
+    }
+
+    .plugin-cell img {
+      height: 32px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .plugin-cell-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #0B1015;
+    }
+
+    .prosumer-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .prosumer-stat-cell {
+      border: 1px dashed rgba(72,148,224,0.3);
+      padding: 20px;
+      margin-right: -1px;
+      margin-bottom: -1px;
+    }
+
+    .prosumer-stat-cell.full-width {
+      grid-column: 1 / -1;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .hero h1 {
+        font-size: 48px;
+        letter-spacing: -2px;
+      }
+
+      .manifesto-container h2 {
+        font-size: 40px;
+        letter-spacing: -2px;
+      }
+
+      .cards-container {
+        grid-template-columns: 1fr;
+      }
+
+      .card:first-child {
+        border-right: none;
+        border-bottom: 1px dashed rgba(72,148,224,0.3);
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .trust-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .trust-cell:nth-child(3n) {
+        border-right: none;
+      }
+
+      .trust-cell:nth-child(6n):not(:nth-child(3n)) {
+        border-right: 1px dashed rgba(72,148,224,0.3);
+      }
+
+      .trust-cell:nth-child(n+7) {
+        border-bottom: 1px dashed rgba(72,148,224,0.3);
+      }
+
+      .trust-cell:nth-child(n+10) {
+        border-bottom: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 16px 20px;
+        height: 64px;
+      }
+
+      .hero {
+        padding: 60px 20px 40px;
+      }
+
+      .hero h1 {
+        font-size: 36px;
+        letter-spacing: -1.5px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+
+      .hero-ctas {
+        flex-direction: column;
+      }
+
+      .blue-hero {
+        height: 300px;
+      }
+
+      .blue-hero-icon {
+        font-size: 80px;
+      }
+
+      .trust-section {
+        padding: 64px 16px 32px;
+      }
+
+      .trust-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .manifesto-container h2 {
+        font-size: 32px;
+        letter-spacing: -1.5px;
+        padding: 40px 20px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .plugin-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .prosumer-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 30px;
+        letter-spacing: -1px;
+      }
+
+      .card {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="nav-logo"><span class="logo-icon">&#x22B9;</span> supermemory</a>
+      <ul class="nav-links">
+        <li><a href="#">Research</a></li>
+        <li><a href="#">Use cases &#9662;</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Docs</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Consumer</a></li>
+      </ul>
+      <div class="nav-right">
+        <a href="#" class="nav-twitter">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          20K
+        </a>
+        <button class="btn-nav">Try for free &rarr;</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <a href="#" class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        <span style="font-weight:600;color:#0B1015">Research</span>
+        <span class="hero-badge-divider"></span>
+        <span class="hero-badge-text">Supermemory is now the best memory provider (Benchmark)</span>
+        <span class="hero-badge-arrow">&rarr;</span>
+      </a>
+      <h1>The context engineering<br>infrastructure for your AI agent</h1>
+      <p>Supermemory gives your agents state-of-the-art memory, RAG, user profiles, connectors, and extractors &ndash; all built in. Extremely low latency. Works with any model.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary">Setup in 5 mins</button>
+        <button class="btn-secondary">Talk to founder &rarr;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLUE HERO SECTION -->
+  <section class="blue-hero">
+    <div class="blue-hero-icon">&#x22B9;</div>
+  </section>
+
+  <!-- TRUST BAR -->
+  <section class="trust-section">
+    <div class="trust-container">
+      <div class="trust-label">Trusted by developers, enterprises and AI agents</div>
+      <div class="trust-grid">
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/17ee1db8-42d1-47d3-98de-80cd4fca7442" alt="Caret"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/19f3a702-9cda-4fe7-a009-6bafe67b0d82" alt="Composio"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/2daaaeac-b98c-44c7-8a83-912b26b8f94f" alt="Cluely"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/d090e42a-70bb-4f17-9a09-914f95f8b46a" alt="Montra"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/351dd9bb-b5b6-48e2-9ef3-f16aeb6d79a8" alt="Motion"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/2c9ddded-5b1b-4a24-b0e3-fa15c064b876" alt="MedTech Vendors"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/0b495eee-98af-449f-bafa-8b47d3fd69c9" alt="perspective"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/4ca4e82c-393e-4876-bff9-2c6c37f648c0" alt="SlothMD"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/2f32a5d3-3247-4d2f-8c4e-be3db894bcfd" alt="scira"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/1c549d07-0581-4cf4-9d2b-eb5c291e8b2c" alt="mixus"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/6cd71614-18c9-4769-b576-e97547e39ce5" alt="ASU"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/1a92a034-1530-4844-94a2-74a7e6af4b1b" alt="P icon"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MANIFESTO HEADLINE -->
+  <section class="manifesto-section">
+    <div class="manifesto-container">
+      <h2>Your AI isn't intelligent until it remembers</h2>
+    </div>
+  </section>
+
+  <!-- TWO CARDS -->
+  <section class="cards-section">
+    <div class="cards-container">
+
+      <!-- ENTERPRISE CARD -->
+      <div class="card">
+        <div class="card-label">ENTERPRISE</div>
+        <h3 class="card-headline">Ship AI products at enterprise scale</h3>
+        <p class="card-body">Deploy on your cloud, comply with regulations, and manage millions of users with full observability.</p>
+        <a href="#" class="card-cta">Supermemory for Enterprise &rarr;</a>
+
+        <div class="stats-grid">
+          <div class="stat-cell tall">
+            <div class="stat-cell-value">&lt;300ms</div>
+            <div class="stat-cell-label">p95 latency</div>
+          </div>
+          <div class="stat-cell tall">
+            <div class="stat-cell-inline">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              Custom connectors
+            </div>
+          </div>
+          <div class="stat-cell tall">
+            <div class="stat-cell-value">5B+</div>
+            <div class="stat-cell-label">tokens processed daily</div>
+          </div>
+          <div class="stat-cell tall">
+            <div class="stat-cell-inline">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              On-prem or hybrid
+            </div>
+          </div>
+          <div class="stat-cell" style="grid-column: 1 / -1;">
+            <div class="stat-cell-inline">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              SOC Type II
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROSUMERS CARD -->
+      <div class="card">
+        <div class="card-label">PROSUMERS</div>
+        <h3 class="card-headline">Give your AI a personal memory</h3>
+        <p class="card-body">Power up ChatGPT, Claude, Cursor, and 100+ apps with OpenClaw plugins and a personal knowledge layer.</p>
+        <a href="#" class="card-cta">Supermemory for Prosumers &rarr;</a>
+
+        <div class="plugin-grid">
+          <div class="plugin-cell">
+            <img src="https://www.figma.com/api/mcp/asset/d22062aa-d8c1-4c07-8a14-b52d517c261f" alt="OpenClaw Plugin">
+            <span class="plugin-cell-label">OpenClaw Plugin</span>
+          </div>
+          <div class="plugin-cell">
+            <img src="https://www.figma.com/api/mcp/asset/3a60b543-2cf5-4779-8a57-34a4d1b78235" alt="Claude Code Plugin">
+            <span class="plugin-cell-label">Claude Code Plugin</span>
+          </div>
+          <div class="plugin-cell">
+            <img src="https://www.figma.com/api/mcp/asset/c831d077-e934-4887-b46c-05c396426c90" alt="OpenCode Plugin">
+            <span class="plugin-cell-label">OpenCode Plugin</span>
+          </div>
+        </div>
+
+        <div class="prosumer-stats">
+          <div class="prosumer-stat-cell full-width">
+            <div class="stat-cell-value">10000+</div>
+            <div class="stat-cell-label">developers &amp; power users</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</body>
+</html>

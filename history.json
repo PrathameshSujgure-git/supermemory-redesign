@@ -1,0 +1,122 @@
+[
+  {
+    "id": "v1",
+    "title": "Homepage — Initial Design",
+    "description": "New homepage with hero, enterprise/plugins split, trust bar, testimonials, Nova teaser, pricing, and footer. Design language from Figma: Space Grotesk + DM Sans, #F5F9FF bg, #3478F6 accent.",
+    "figmaNode": "153:4710",
+    "figmaUrl": "https://www.figma.com/design/SJH60WH8nO7STa3SHjYvER/Supermemory-Revamp?node-id=153-4710",
+    "file": "snapshots/v1.html",
+    "date": "2026-02-28T15:13:49+05:30",
+    "page": "Homepage"
+  },
+  {
+    "id": "v2",
+    "title": "Homepage — Figma-Exact Match",
+    "description": "Rebuilt to match Figma node 143:863 exactly. Dashed grid borders, blue hero section with dot pattern, real company logos from Figma assets, DM Mono labels, gradient cards, correct copy and layout.",
+    "figmaNode": "153:4710",
+    "figmaUrl": "https://www.figma.com/design/SJH60WH8nO7STa3SHjYvER/Supermemory-Revamp?node-id=153-4710",
+    "file": "snapshots/v2.html",
+    "date": "2026-02-28T15:21:16+05:30",
+    "page": "Homepage"
+  },
+  {
+    "id": "v3",
+    "title": "Homepage — Full Refined (Definitive)",
+    "description": "Complete homepage with new copy solving all 8 teardown problems. Hero leads with 'Your AI isn't intelligent until it remembers', Enterprise/Plugins split with viral hook copy, How You Connect (4-col), Trust + Tweets, What's New, Pricing (3-col), Footer. Nav updated to Enterprise|Plugins|Nova.",
+    "figmaNode": "153:4710",
+    "figmaUrl": "https://www.figma.com/design/SJH60WH8nO7STa3SHjYvER/Supermemory-Revamp?node-id=153-4710",
+    "file": "snapshots/v3.html",
+    "date": "2026-02-28T15:33:10+05:30",
+    "page": "Homepage"
+  },
+  {
+    "id": "v4-enterprise",
+    "title": "Enterprise Page — Full Build",
+    "description": "Complete enterprise landing page: Hero with 'context engineering infrastructure', blue hero visual with stats (5B+ tokens, <300ms, 800+), manifesto, feature showcase (Semantic Memory, Cross-session Context, Smart Retrieval), AI agent logos grid, enterprise-ready stats (SOC2, 99.9% uptime), 15 data connectors, 4-step pipeline visualization, metrics grid, model logos, usage-based pricing.",
+    "figmaNode": "153:4710",
+    "figmaUrl": "https://www.figma.com/design/SJH60WH8nO7STa3SHjYvER/Supermemory-Revamp?node-id=153-4710",
+    "file": "snapshots/v4-enterprise.html",
+    "date": "2026-02-28T16:01:55+05:30",
+    "page": "Enterprise"
+  },
+  {
+    "id": "v4-plugins",
+    "title": "Plugins Page — Full Build",
+    "description": "Complete plugins landing page: Hero with 'What you teach one AI, every AI remembers', animated plugin icons, before/after problem visualization, 3-step how-it-works flow, plugin showcase cards (Claude Code, OpenClaw, OpenCode), Chrome extension section, 4 use-case cards, developer testimonials, trust logos + stats, Free/$19 pricing.",
+    "figmaNode": "153:4710",
+    "figmaUrl": "https://www.figma.com/design/SJH60WH8nO7STa3SHjYvER/Supermemory-Revamp?node-id=153-4710",
+    "file": "snapshots/v4-plugins.html",
+    "date": "2026-02-28T16:01:55+05:30",
+    "page": "Plugins"
+  },
+  {
+    "id": "v4-homepage",
+    "title": "Homepage — Linked Navigation",
+    "description": "Updated homepage with working links to enterprise.html and plugins.html across nav, hero CTAs, card CTAs, and footer.",
+    "figmaNode": "153:4710",
+    "figmaUrl": "https://www.figma.com/design/SJH60WH8nO7STa3SHjYvER/Supermemory-Revamp?node-id=153-4710",
+    "file": "snapshots/v4-homepage.html",
+    "date": "2026-02-28T16:01:55+05:30",
+    "page": "Homepage"
+  },
+  {
+    "id": "v5-enterprise",
+    "title": "Enterprise Page — Critique Rebuild",
+    "description": "Complete rewrite based on CTO-level critique. Added: Python SDK code snippet in hero, 4 customer case studies with real stats (Composio, SlothMD, Scira, Cluely), code examples in feature cards, 3-tier pricing with cost calculator, merged integrations section (agents+models+connectors). Removed: vague 'Unforgettable' headline, repeated manifesto, filler sections. 'Talk to sales' is now primary CTA.",
+    "figmaNode": "153:4710",
+    "figmaUrl": "https://www.figma.com/design/SJH60WH8nO7STa3SHjYvER/Supermemory-Revamp?node-id=153-4710",
+    "file": "snapshots/v5-enterprise.html",
+    "date": "2026-02-28T16:24:17+05:30",
+    "page": "Enterprise"
+  },
+  {
+    "id": "v5-plugins",
+    "title": "Plugins Page — Critique Rebuild",
+    "description": "Complete rewrite based on developer-perspective critique. Added: live terminal demo with blinking cursor, GitHub proof (4.2K stars, 380 forks, 89 contributors), MCP protocol explainer with config code, privacy/data ownership section (encryption, self-host, export), defined 'memory' unit in pricing. Removed: fake testimonials, redundant CTA banner, bloated before/after problem section, confusing OpenClaw/OpenCode naming. Plugins now named by target tool (Claude Code, Cursor, Windsurf) with install commands. Free tier is local-first with unlimited memories.",
+    "figmaNode": "153:4710",
+    "figmaUrl": "https://www.figma.com/design/SJH60WH8nO7STa3SHjYvER/Supermemory-Revamp?node-id=153-4710",
+    "file": "snapshots/v5-plugins.html",
+    "date": "2026-02-28T16:57:23+05:30",
+    "page": "Plugins"
+  },
+  {
+    "id": "v6-homepage",
+    "title": "Homepage — Final Multi-Persona Critique",
+    "description": "Headline to 'The memory layer for AI' (passes 5-sec test). Audience-first card labels (FOR ENGINEERING TEAMS / FOR DEVELOPERS). Enterprise card uses 'context engineering infrastructure' language. Plugins card mentions Claude Code, Cursor, Windsurf explicitly. Blue hero section now shows trust stats (2.4K stars, 5B+ tokens, Open source). Pricing updated: Plugins shows Free tier, Nova marked Coming Soon. Nav CTAs now link to real pages. Fixed copyright to 2026.",
+    "figmaNode": "153:4710",
+    "figmaUrl": "https://www.figma.com/design/SJH60WH8nO7STa3SHjYvER/Supermemory-Revamp?node-id=153-4710",
+    "file": "snapshots/v6-homepage.html",
+    "date": "2026-02-28T17:18:48+05:30",
+    "page": "Homepage"
+  },
+  {
+    "id": "v6-enterprise",
+    "title": "Enterprise Page — Final Multi-Persona Critique",
+    "description": "Added Python/TS/cURL language tabs in hero code block. New quickstart section (3-step with code). Hero trust bar (SOC2, 99.9% uptime, <300ms p99, On-prem). Compliance badges row (SOC2/GDPR/HIPAA/AES-256/TLS 1.3/SSO). Multi-tenant isolation feature card. Pipeline technical detail row (embedding/chunking/ranking/regions). Security section with links to status page, whitepaper, SLA docs. All nav/footer links now real URLs.",
+    "figmaNode": "153:4710",
+    "figmaUrl": "https://www.figma.com/design/SJH60WH8nO7STa3SHjYvER/Supermemory-Revamp?node-id=153-4710",
+    "file": "snapshots/v6-enterprise.html",
+    "date": "2026-02-28T17:18:48+05:30",
+    "page": "Enterprise"
+  },
+  {
+    "id": "v6-plugins",
+    "title": "Plugins Page — Final Multi-Persona Critique",
+    "description": "Copyable install command in hero. 'Works with' logo row. Demo shows actual config file paths (~/.claude/settings.json). Plugin cards differentiated with unique feature bullets per tool (.cursorrules for Cursor, /resume for Claude Code). MCP explainer ('USB-C for AI'). Privacy section: what gets stored vs never stored, specific encryption (AES-256, TLS 1.3). All dead links fixed. Free plan CTA is actual install command. Cloud trial specifies 14 days.",
+    "figmaNode": "153:4710",
+    "figmaUrl": "https://www.figma.com/design/SJH60WH8nO7STa3SHjYvER/Supermemory-Revamp?node-id=153-4710",
+    "file": "snapshots/v6-plugins.html",
+    "date": "2026-02-28T17:18:48+05:30",
+    "page": "Plugins"
+  },
+  {
+    "id": "v7-visual-refinement",
+    "title": "Homepage — Visual Refinement (Grid-Based Figma Match)",
+    "description": "Complete visual overhaul of homepage layout. Figma 143:863 pattern-matched: dashed side borders on 1200px container over #F5F9FF bg, all buttons blocky (0 border-radius) with bg #fafafa and border rgba(72,148,224,0.3), badge redesigned with #DEEBFF bg and layered square dot, hero at 144px top padding with 64px Space Grotesk headline, 560px blue hero band with dot pattern, trust section wrapped in solid #9EC7EF border with 128px top spacing and 88px cells, manifesto+products in single bordered container with gradient cards. Nav uses text logo, production site links (Research, Use cases, Pricing, Docs, Blog, About, Consumer), X 20K, Try for free button. Stats row removed (stats in product cards). All elements square/blocky — no rounded corners anywhere.",
+    "figmaNode": "153:4710",
+    "figmaUrl": "https://www.figma.com/design/SJH60WH8nO7STa3SHjYvER/Supermemory-Revamp?node-id=153-4710",
+    "file": "snapshots/v7-visual-refinement.html",
+    "date": "2026-02-28T19:45:00+05:30",
+    "page": "Homepage"
+  }
+]

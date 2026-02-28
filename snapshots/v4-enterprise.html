@@ -1,0 +1,1946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supermemory Enterprise — Context Engineering Infrastructure for AI Agents</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      background: #F5F9FF;
+      color: #0B1015;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      height: 89px;
+      display: flex;
+      align-items: center;
+      padding: 24px 32px;
+      background: rgba(245,249,255,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: box-shadow 0.2s ease;
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      color: #0B1015;
+    }
+
+    .nav-logo .logo-icon {
+      color: #3478F6;
+      font-size: 22px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: #0B1015;
+      letter-spacing: -0.15px;
+      transition: opacity 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      opacity: 0.7;
+    }
+
+    .nav-links a.active {
+      font-weight: 700;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-shrink: 0;
+    }
+
+    .nav-twitter {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #0B1015;
+      transition: opacity 0.2s ease;
+    }
+
+    .nav-twitter:hover {
+      opacity: 0.7;
+    }
+
+    .nav-twitter svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn-nav {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 10px 22px;
+      border-radius: 100px;
+      border: 1px solid #D1D5DB;
+      background: transparent;
+      color: #0B1015;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav:hover {
+      background: #0B1015;
+      color: #fff;
+      border-color: #0B1015;
+    }
+
+    /* ─── BUTTONS ─── */
+    .btn-primary {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 10px 30px;
+      height: 41px;
+      border-radius: 100px;
+      border: none;
+      background: #0B1015;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    .btn-secondary {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 10px 24px;
+      height: 41px;
+      border-radius: 100px;
+      border: 1px solid #D1D5DB;
+      background: transparent;
+      color: #0B1015;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-secondary:hover {
+      border-color: #0B1015;
+    }
+
+    /* ─── SECTION LABEL ─── */
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #1F78FF;
+      text-align: center;
+    }
+
+    /* ─── CONTAINER ─── */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    .bordered-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      border: 1px solid #9EC7EF;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      padding: 80px 32px 52px;
+      text-align: center;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 64px;
+      font-weight: 500;
+      letter-spacing: -3.2px;
+      line-height: 1.1;
+      color: #0B1015;
+      margin-bottom: 24px;
+    }
+
+    .hero-subtitle {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: -0.18px;
+      line-height: 1.6;
+      color: #888E94;
+      max-width: 580px;
+      margin: 0 auto 32px;
+    }
+
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    /* ─── BLUE HERO ─── */
+    .blue-hero {
+      background-color: #0563F0;
+      background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px);
+      background-size: 20px 20px;
+      height: 561px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .blue-hero-icon {
+      font-size: 200px;
+      color: rgba(255,255,255,0.25);
+      font-family: 'Space Grotesk', sans-serif;
+      user-select: none;
+    }
+
+    .stats-row {
+      display: flex;
+      border: 1px solid #9EC7EF;
+      border-top: none;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .stat-cell {
+      flex: 1;
+      padding: 32px 20px;
+      text-align: center;
+      border-right: 1px dashed rgba(72, 148, 224, 0.3);
+    }
+
+    .stat-cell:last-child {
+      border-right: none;
+    }
+
+    .stat-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 40px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      color: #0B1015;
+    }
+
+    .stat-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #888E94;
+      margin-top: 4px;
+    }
+
+    /* ─── MANIFESTO ─── */
+    .manifesto {
+      padding: 80px 32px;
+    }
+
+    .manifesto-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      border: 1px solid #9EC7EF;
+      padding: 64px;
+      text-align: center;
+    }
+
+    .manifesto h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px;
+      font-weight: 500;
+      letter-spacing: -2.6px;
+      line-height: 1.1;
+      color: #0B1015;
+      margin-bottom: 24px;
+    }
+
+    .manifesto p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: -0.18px;
+      line-height: 1.6;
+      color: #888E94;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* ─── FEATURE SHOWCASE ─── */
+    .feature-showcase {
+      padding: 0 32px 80px;
+    }
+
+    .feature-showcase-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .feature-showcase-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .feature-showcase-header h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px;
+      font-weight: 500;
+      letter-spacing: -2.6px;
+      line-height: 1.1;
+      color: #0B1015;
+      margin-top: 16px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: linear-gradient(to bottom, #D6E9FF, #F4F9FF);
+      border: 1px solid #9EC7EF;
+      padding: 40px;
+      border-radius: 0;
+    }
+
+    .feature-card-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #1F78FF;
+      margin-bottom: 16px;
+    }
+
+    .feature-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 500;
+      letter-spacing: -1.4px;
+      line-height: 1.25;
+      color: #0B1015;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: -0.16px;
+      line-height: 1.6;
+      color: #888E94;
+    }
+
+    .feature-card-visual {
+      height: 180px;
+      background: rgba(31, 120, 255, 0.06);
+      border: 1px dashed rgba(72, 148, 224, 0.3);
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: #888E94;
+    }
+
+    .feature-card.full-width {
+      grid-column: 1 / -1;
+    }
+
+    /* ─── AGENT LOGOS ─── */
+    .agents-section {
+      padding: 0 32px 80px;
+    }
+
+    .agents-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      border: 1px solid #9EC7EF;
+    }
+
+    .agents-header {
+      text-align: center;
+      padding: 48px 40px 0;
+    }
+
+    .agents-header h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px;
+      font-weight: 500;
+      letter-spacing: -2.6px;
+      line-height: 1.1;
+      color: #0B1015;
+      margin-top: 16px;
+      margin-bottom: 8px;
+    }
+
+    .agents-header p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: -0.18px;
+      line-height: 1.6;
+      color: #888E94;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      margin-top: 48px;
+    }
+
+    .agent-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 88px;
+      border-right: 1px dashed rgba(72, 148, 224, 0.3);
+      border-top: 1px dashed rgba(72, 148, 224, 0.3);
+    }
+
+    .agent-cell:nth-child(6n) {
+      border-right: none;
+    }
+
+    .agent-cell img {
+      max-height: 32px;
+      max-width: 100px;
+      object-fit: contain;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+    }
+
+    .agent-cell img:hover {
+      opacity: 1;
+    }
+
+    .agent-cell .agent-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: #0B1015;
+      opacity: 0.5;
+      transition: opacity 0.2s ease;
+    }
+
+    .agent-cell:hover .agent-text {
+      opacity: 0.8;
+    }
+
+    /* ─── ENTERPRISE READY ─── */
+    .enterprise-ready {
+      padding: 0 32px 80px;
+    }
+
+    .enterprise-ready-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .enterprise-ready-inner h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px;
+      font-weight: 500;
+      letter-spacing: -2.6px;
+      line-height: 1.1;
+      color: #0B1015;
+      margin-top: 16px;
+      margin-bottom: 48px;
+    }
+
+    .enterprise-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 1px solid #9EC7EF;
+    }
+
+    .enterprise-stat {
+      padding: 40px 20px;
+      border-right: 1px dashed rgba(72, 148, 224, 0.3);
+      text-align: center;
+    }
+
+    .enterprise-stat:last-child {
+      border-right: none;
+    }
+
+    .enterprise-stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(31, 120, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      color: #1F78FF;
+      font-size: 20px;
+    }
+
+    .enterprise-stat .stat-value {
+      font-size: 32px;
+      margin-bottom: 4px;
+    }
+
+    .enterprise-stat .stat-label {
+      font-size: 14px;
+    }
+
+    /* ─── DATA INGESTION ─── */
+    .ingestion {
+      padding: 0 32px 80px;
+    }
+
+    .ingestion-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .ingestion-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .ingestion-header h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px;
+      font-weight: 500;
+      letter-spacing: -2.6px;
+      line-height: 1.1;
+      color: #0B1015;
+      margin-top: 16px;
+      margin-bottom: 16px;
+    }
+
+    .ingestion-header p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: -0.18px;
+      line-height: 1.6;
+      color: #888E94;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .connectors-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border: 1px solid #9EC7EF;
+    }
+
+    .connector-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 110px;
+      border-right: 1px dashed rgba(72, 148, 224, 0.3);
+      border-bottom: 1px dashed rgba(72, 148, 224, 0.3);
+      gap: 8px;
+      transition: background 0.2s ease;
+    }
+
+    .connector-cell:nth-child(5n) {
+      border-right: none;
+    }
+
+    .connector-cell:nth-last-child(-n+5) {
+      border-bottom: none;
+    }
+
+    .connector-cell:hover {
+      background: rgba(31, 120, 255, 0.03);
+    }
+
+    .connector-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .connector-name {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #888E94;
+    }
+
+    /* ─── PIPELINE ─── */
+    .pipeline {
+      padding: 0 32px 80px;
+    }
+
+    .pipeline-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .pipeline-inner h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px;
+      font-weight: 500;
+      letter-spacing: -2.6px;
+      line-height: 1.1;
+      color: #0B1015;
+      margin-top: 16px;
+      margin-bottom: 48px;
+    }
+
+    .pipeline-visual {
+      border: 1px solid #9EC7EF;
+      padding: 48px 40px;
+    }
+
+    .pipeline-steps {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .pipeline-step {
+      flex: 1;
+      padding: 32px 20px;
+      border: 1px dashed rgba(72, 148, 224, 0.3);
+      margin-right: -1px;
+      text-align: center;
+      position: relative;
+    }
+
+    .pipeline-step-number {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #1F78FF;
+      margin-bottom: 16px;
+    }
+
+    .pipeline-step-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(31, 120, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 24px;
+    }
+
+    .pipeline-step h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: -0.5px;
+      color: #0B1015;
+      margin-bottom: 8px;
+    }
+
+    .pipeline-step p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #888E94;
+      line-height: 1.5;
+    }
+
+    .pipeline-step .pipeline-latency {
+      margin-top: 12px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      color: #1F78FF;
+    }
+
+    .pipeline-arrow {
+      position: absolute;
+      right: -14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 28px;
+      background: #F5F9FF;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      color: #1F78FF;
+      font-size: 14px;
+    }
+
+    /* ─── METRICS GRID ─── */
+    .metrics {
+      padding: 0 32px 80px;
+    }
+
+    .metrics-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .metrics-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .metrics-header h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px;
+      font-weight: 500;
+      letter-spacing: -2.6px;
+      line-height: 1.1;
+      color: #0B1015;
+      margin-top: 16px;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .metric-card {
+      background: linear-gradient(to bottom, #D6E9FF, #F4F9FF);
+      border: 1px solid #9EC7EF;
+      padding: 40px;
+    }
+
+    .metric-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 500;
+      letter-spacing: -1.4px;
+      line-height: 1.25;
+      color: #0B1015;
+      margin-bottom: 12px;
+    }
+
+    .metric-card p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: -0.16px;
+      line-height: 1.6;
+      color: #888E94;
+      margin-bottom: 24px;
+    }
+
+    .metric-card-stat {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      padding-top: 24px;
+      border-top: 1px dashed rgba(72, 148, 224, 0.3);
+    }
+
+    .metric-card-stat .stat-value {
+      font-size: 36px;
+    }
+
+    .metric-card-stat .stat-label {
+      font-size: 14px;
+    }
+
+    /* ─── MODELS ─── */
+    .models {
+      padding: 0 32px 80px;
+    }
+
+    .models-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      border: 1px solid #9EC7EF;
+    }
+
+    .models-header {
+      text-align: center;
+      padding: 48px 40px 0;
+    }
+
+    .models-header h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px;
+      font-weight: 500;
+      letter-spacing: -2.6px;
+      line-height: 1.1;
+      color: #0B1015;
+      margin-top: 16px;
+      margin-bottom: 8px;
+    }
+
+    .models-header p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: -0.18px;
+      line-height: 1.6;
+      color: #888E94;
+      max-width: 550px;
+      margin: 0 auto;
+    }
+
+    .models-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin-top: 48px;
+    }
+
+    .model-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 88px;
+      border-right: 1px dashed rgba(72, 148, 224, 0.3);
+      border-top: 1px dashed rgba(72, 148, 224, 0.3);
+      gap: 10px;
+    }
+
+    .model-cell:nth-child(4n) {
+      border-right: none;
+    }
+
+    .model-cell-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .model-cell-name {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: #0B1015;
+      opacity: 0.6;
+    }
+
+    /* ─── PRICING ─── */
+    .pricing {
+      padding: 0 32px 80px;
+    }
+
+    .pricing-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .pricing-inner h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px;
+      font-weight: 500;
+      letter-spacing: -2.6px;
+      line-height: 1.1;
+      color: #0B1015;
+      margin-top: 16px;
+      margin-bottom: 16px;
+    }
+
+    .pricing-inner > p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: -0.18px;
+      line-height: 1.6;
+      color: #888E94;
+      max-width: 550px;
+      margin: 0 auto 48px;
+    }
+
+    .pricing-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .pricing-card {
+      border: 1px solid #9EC7EF;
+      padding: 40px;
+      text-align: left;
+      background: #fff;
+    }
+
+    .pricing-card.featured {
+      background: linear-gradient(to bottom, #D6E9FF, #F4F9FF);
+    }
+
+    .pricing-card-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #1F78FF;
+      margin-bottom: 16px;
+    }
+
+    .pricing-card-price {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 40px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: #0B1015;
+      margin-bottom: 4px;
+    }
+
+    .pricing-card-price span {
+      font-size: 16px;
+      font-weight: 500;
+      color: #888E94;
+    }
+
+    .pricing-card-desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #888E94;
+      margin-bottom: 24px;
+    }
+
+    .pricing-features {
+      list-style: none;
+      margin-bottom: 32px;
+    }
+
+    .pricing-features li {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: #0B1015;
+      padding: 8px 0;
+      border-bottom: 1px dashed rgba(72, 148, 224, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pricing-features li:last-child {
+      border-bottom: none;
+    }
+
+    .check {
+      color: #1F78FF;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .pricing-card .btn-primary,
+    .pricing-card .btn-secondary {
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* ─── FOOTER ─── */
+    .footer {
+      padding: 80px 32px;
+      text-align: center;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      border: 1px solid #9EC7EF;
+      padding: 64px 40px;
+    }
+
+    .footer h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px;
+      font-weight: 500;
+      letter-spacing: -2.6px;
+      line-height: 1.1;
+      color: #0B1015;
+      margin-bottom: 24px;
+    }
+
+    .footer p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: #888E94;
+      margin-bottom: 32px;
+    }
+
+    .footer-ctas {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      padding-top: 32px;
+      border-top: 1px dashed rgba(72, 148, 224, 0.3);
+    }
+
+    .footer-links a {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #888E94;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: #0B1015;
+    }
+
+    .footer-bottom {
+      margin-top: 32px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: #888E94;
+    }
+
+    /* ─── CTA LINK ─── */
+    .cta-link {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      color: #1F78FF;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: gap 0.2s ease;
+    }
+
+    .cta-link:hover {
+      gap: 8px;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .hero h1 {
+        font-size: 48px;
+        letter-spacing: -2.4px;
+      }
+
+      .manifesto h2,
+      .feature-showcase-header h2,
+      .agents-header h2,
+      .enterprise-ready-inner h2,
+      .ingestion-header h2,
+      .pipeline-inner h2,
+      .metrics-header h2,
+      .models-header h2,
+      .pricing-inner h2,
+      .footer h2 {
+        font-size: 40px;
+        letter-spacing: -2px;
+      }
+
+      .feature-grid,
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .agents-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .connectors-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .connectors-grid .connector-cell:nth-child(5n) {
+        border-right: 1px dashed rgba(72, 148, 224, 0.3);
+      }
+
+      .connectors-grid .connector-cell:nth-child(4n) {
+        border-right: none;
+      }
+
+      .enterprise-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .enterprise-stat:nth-child(2) {
+        border-right: none;
+      }
+
+      .enterprise-stat:nth-child(-n+2) {
+        border-bottom: 1px dashed rgba(72, 148, 224, 0.3);
+      }
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        height: 64px;
+        padding: 16px 20px;
+      }
+
+      .hero {
+        padding: 60px 20px 40px;
+      }
+
+      .hero h1 {
+        font-size: 36px;
+        letter-spacing: -1.8px;
+      }
+
+      .hero-ctas {
+        flex-direction: column;
+      }
+
+      .blue-hero {
+        height: 300px;
+      }
+
+      .blue-hero-icon {
+        font-size: 80px;
+      }
+
+      .stats-row {
+        flex-direction: column;
+      }
+
+      .stat-cell {
+        border-right: none;
+        border-bottom: 1px dashed rgba(72, 148, 224, 0.3);
+      }
+
+      .stat-cell:last-child {
+        border-bottom: none;
+      }
+
+      .manifesto {
+        padding: 60px 20px;
+      }
+
+      .manifesto-inner {
+        padding: 40px 24px;
+      }
+
+      .manifesto h2,
+      .feature-showcase-header h2,
+      .agents-header h2,
+      .enterprise-ready-inner h2,
+      .ingestion-header h2,
+      .pipeline-inner h2,
+      .metrics-header h2,
+      .models-header h2,
+      .pricing-inner h2,
+      .footer h2 {
+        font-size: 32px;
+        letter-spacing: -1.6px;
+      }
+
+      .feature-showcase,
+      .agents-section,
+      .enterprise-ready,
+      .ingestion,
+      .pipeline,
+      .metrics,
+      .models,
+      .pricing,
+      .footer {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .feature-card {
+        padding: 28px;
+      }
+
+      .agents-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .enterprise-stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .enterprise-stat {
+        border-right: none;
+        border-bottom: 1px dashed rgba(72, 148, 224, 0.3);
+      }
+
+      .enterprise-stat:last-child {
+        border-bottom: none;
+      }
+
+      .connectors-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .connectors-grid .connector-cell:nth-child(4n) {
+        border-right: 1px dashed rgba(72, 148, 224, 0.3);
+      }
+
+      .connectors-grid .connector-cell:nth-child(3n) {
+        border-right: none;
+      }
+
+      .pipeline-steps {
+        flex-direction: column;
+      }
+
+      .pipeline-step {
+        margin-right: 0;
+        margin-bottom: -1px;
+      }
+
+      .pipeline-arrow {
+        right: 50%;
+        transform: translateX(50%);
+        top: auto;
+        bottom: -14px;
+      }
+
+      .pipeline-arrow svg {
+        transform: rotate(90deg);
+      }
+
+      .models-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .pricing-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-inner {
+        padding: 40px 24px;
+      }
+
+      .footer-links {
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 30px;
+        letter-spacing: -1.5px;
+      }
+
+      .feature-card {
+        padding: 24px;
+      }
+
+      .metric-card {
+        padding: 24px;
+      }
+
+      .pricing-card {
+        padding: 24px;
+      }
+
+      .agents-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .connectors-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .connectors-grid .connector-cell:nth-child(3n) {
+        border-right: 1px dashed rgba(72, 148, 224, 0.3);
+      }
+
+      .connectors-grid .connector-cell:nth-child(2n) {
+        border-right: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAV ─── -->
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><span class="logo-icon">&#x22B9;</span> supermemory</a>
+      <ul class="nav-links">
+        <li><a href="enterprise.html" class="active">Enterprise</a></li>
+        <li><a href="plugins.html">Plugins</a></li>
+        <li><a href="#">Nova</a></li>
+        <li><a href="#">Docs</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+      </ul>
+      <div class="nav-right">
+        <a href="#" class="nav-twitter">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          20K
+        </a>
+        <button class="btn-nav" onclick="window.location.href='#pricing'">Get Started &rarr;</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ─── HERO ─── -->
+  <section class="hero">
+    <div class="hero-content">
+      <p class="section-label">Enterprise Infrastructure</p>
+      <h1>The context engineering infrastructure for your AI agent</h1>
+      <p class="hero-subtitle">Give your AI agents persistent, cross-session memory. Supermemory is the managed memory layer&mdash;RAG infrastructure, vector storage, semantic search&mdash;so your agents remember everything.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="window.location.href='#pricing'">Get started &rarr;</button>
+        <button class="btn-secondary">Talk to us &rarr;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── BLUE HERO ─── -->
+  <div class="blue-hero">
+    <span class="blue-hero-icon">&#x22B9;</span>
+  </div>
+
+  <!-- ─── STATS ROW ─── -->
+  <div class="stats-row">
+    <div class="stat-cell">
+      <div class="stat-value">5B+</div>
+      <div class="stat-label">Tokens processed</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value">&lt;300ms</div>
+      <div class="stat-label">p99 retrieval latency</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value">800+</div>
+      <div class="stat-label">Enterprise connections</div>
+    </div>
+  </div>
+
+  <!-- ─── MANIFESTO ─── -->
+  <section class="manifesto">
+    <div class="manifesto-inner">
+      <p class="section-label" style="margin-bottom: 16px;">Why memory matters</p>
+      <h2>Your AI isn't intelligent until it remembers</h2>
+      <p>Every AI agent starts each session from zero. No context about the user, no memory of past decisions, no understanding of what worked before. Your agents are doing the same work over and over, asking the same questions, making the same mistakes. Without persistent memory, your AI is a stateless function pretending to be intelligent. Supermemory changes that.</p>
+    </div>
+  </section>
+
+  <!-- ─── FEATURE SHOWCASE ─── -->
+  <section class="feature-showcase">
+    <div class="feature-showcase-inner">
+      <div class="feature-showcase-header">
+        <p class="section-label">Capabilities</p>
+        <h2>Supermemory makes your AI Unforgettable</h2>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card-label">Semantic Memory</div>
+          <h3>Memory infrastructure that works for every use case</h3>
+          <p>From customer support agents that remember every prior ticket, to coding assistants that recall your entire codebase&mdash;plug in once, get memory everywhere.</p>
+          <div class="feature-card-visual">
+            <svg width="200" height="120" viewBox="0 0 200 120" fill="none">
+              <circle cx="40" cy="60" r="24" stroke="#1F78FF" stroke-width="1.5" stroke-dasharray="4 4" fill="rgba(31,120,255,0.05)"/>
+              <circle cx="100" cy="60" r="24" stroke="#1F78FF" stroke-width="1.5" stroke-dasharray="4 4" fill="rgba(31,120,255,0.05)"/>
+              <circle cx="160" cy="60" r="24" stroke="#1F78FF" stroke-width="1.5" stroke-dasharray="4 4" fill="rgba(31,120,255,0.05)"/>
+              <line x1="64" y1="60" x2="76" y2="60" stroke="#1F78FF" stroke-width="1.5"/>
+              <line x1="124" y1="60" x2="136" y2="60" stroke="#1F78FF" stroke-width="1.5"/>
+              <text x="40" y="64" text-anchor="middle" fill="#1F78FF" font-size="10" font-family="DM Mono">store</text>
+              <text x="100" y="64" text-anchor="middle" fill="#1F78FF" font-size="10" font-family="DM Mono">index</text>
+              <text x="160" y="64" text-anchor="middle" fill="#1F78FF" font-size="10" font-family="DM Mono">recall</text>
+            </svg>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-label">Cross-session Context</div>
+          <h3>Bring your own AI to content that remembers</h3>
+          <p>Conversation history, user preferences, document context&mdash;all persisted and retrievable via a single API call. Your agents pick up exactly where they left off.</p>
+          <div class="feature-card-visual">
+            <svg width="200" height="120" viewBox="0 0 200 120" fill="none">
+              <rect x="20" y="20" width="60" height="35" rx="4" stroke="#1F78FF" stroke-width="1.5" stroke-dasharray="4 4" fill="rgba(31,120,255,0.05)"/>
+              <rect x="20" y="65" width="60" height="35" rx="4" stroke="#1F78FF" stroke-width="1.5" stroke-dasharray="4 4" fill="rgba(31,120,255,0.05)"/>
+              <rect x="120" y="35" width="60" height="50" rx="4" stroke="#1F78FF" stroke-width="1.5" fill="rgba(31,120,255,0.08)"/>
+              <line x1="80" y1="37" x2="120" y2="55" stroke="#1F78FF" stroke-width="1"/>
+              <line x1="80" y1="82" x2="120" y2="65" stroke="#1F78FF" stroke-width="1"/>
+              <text x="50" y="41" text-anchor="middle" fill="#1F78FF" font-size="9" font-family="DM Mono">session 1</text>
+              <text x="50" y="86" text-anchor="middle" fill="#1F78FF" font-size="9" font-family="DM Mono">session 2</text>
+              <text x="150" y="64" text-anchor="middle" fill="#1F78FF" font-size="9" font-family="DM Mono">context</text>
+            </svg>
+          </div>
+        </div>
+        <div class="feature-card full-width">
+          <div class="feature-card-label">Smart Retrieval</div>
+          <h3>From raw data to unforgettable memory in milliseconds</h3>
+          <p>Automatic chunking, embedding, and indexing. Semantic search that understands intent, not just keywords. Context windows optimized per model. All behind a single SDK call.</p>
+          <div class="feature-card-visual" style="height: 140px;">
+            <svg width="500" height="100" viewBox="0 0 500 100" fill="none">
+              <rect x="10" y="30" width="90" height="40" rx="4" stroke="#1F78FF" stroke-width="1.5" fill="rgba(31,120,255,0.05)"/>
+              <text x="55" y="54" text-anchor="middle" fill="#1F78FF" font-size="10" font-family="DM Mono">raw data</text>
+              <path d="M105 50 L140 50" stroke="#1F78FF" stroke-width="1.5" marker-end="url(#arrow)"/>
+              <rect x="145" y="30" width="90" height="40" rx="4" stroke="#1F78FF" stroke-width="1.5" fill="rgba(31,120,255,0.05)"/>
+              <text x="190" y="54" text-anchor="middle" fill="#1F78FF" font-size="10" font-family="DM Mono">chunk</text>
+              <path d="M240 50 L275 50" stroke="#1F78FF" stroke-width="1.5" marker-end="url(#arrow)"/>
+              <rect x="280" y="30" width="90" height="40" rx="4" stroke="#1F78FF" stroke-width="1.5" fill="rgba(31,120,255,0.05)"/>
+              <text x="325" y="54" text-anchor="middle" fill="#1F78FF" font-size="10" font-family="DM Mono">embed</text>
+              <path d="M375 50 L410 50" stroke="#1F78FF" stroke-width="1.5" marker-end="url(#arrow)"/>
+              <rect x="415" y="30" width="75" height="40" rx="4" stroke="#1F78FF" stroke-width="1.5" fill="rgba(31,120,255,0.08)"/>
+              <text x="452" y="54" text-anchor="middle" fill="#1F78FF" font-size="10" font-family="DM Mono">recall</text>
+              <defs><marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#1F78FF"/></marker></defs>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── BUILT FOR EVERY AI AGENT ─── -->
+  <section class="agents-section">
+    <div class="agents-inner">
+      <div class="agents-header">
+        <p class="section-label">Integrations</p>
+        <h2>Built for every AI agent</h2>
+        <p>Works with every agent framework and coding assistant. One SDK, universal memory.</p>
+      </div>
+      <div class="agents-grid">
+        <div class="agent-cell">
+          <img src="https://www.figma.com/api/mcp/asset/3a60b543-2cf5-4779-8a57-34a4d1b78235" alt="Claude Code">
+        </div>
+        <div class="agent-cell">
+          <img src="https://www.figma.com/api/mcp/asset/d22062aa-d8c1-4c07-8a14-b52d517c261f" alt="OpenClaw">
+        </div>
+        <div class="agent-cell">
+          <img src="https://www.figma.com/api/mcp/asset/c831d077-e934-4887-b46c-05c396426c90" alt="OpenCode">
+        </div>
+        <div class="agent-cell">
+          <span class="agent-text">LangChain</span>
+        </div>
+        <div class="agent-cell">
+          <span class="agent-text">CrewAI</span>
+        </div>
+        <div class="agent-cell">
+          <span class="agent-text">AutoGen</span>
+        </div>
+        <div class="agent-cell">
+          <span class="agent-text">Vercel AI</span>
+        </div>
+        <div class="agent-cell">
+          <span class="agent-text">LlamaIndex</span>
+        </div>
+        <div class="agent-cell">
+          <span class="agent-text">Haystack</span>
+        </div>
+        <div class="agent-cell">
+          <span class="agent-text">Semantic Kernel</span>
+        </div>
+        <div class="agent-cell">
+          <span class="agent-text">Mastra</span>
+        </div>
+        <div class="agent-cell">
+          <span class="agent-text">Custom SDK</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── ENTERPRISE READY ─── -->
+  <section class="enterprise-ready">
+    <div class="enterprise-ready-inner">
+      <p class="section-label">Security & Scale</p>
+      <h2>Enterprise-ready and built to scale</h2>
+      <div class="enterprise-stats-grid">
+        <div class="enterprise-stat">
+          <div class="enterprise-stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div class="stat-value">SOC 2</div>
+          <div class="stat-label">Type II compliant</div>
+        </div>
+        <div class="enterprise-stat">
+          <div class="enterprise-stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="stat-value">99.9%</div>
+          <div class="stat-label">Uptime SLA</div>
+        </div>
+        <div class="enterprise-stat">
+          <div class="enterprise-stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <div class="stat-value">&lt;300ms</div>
+          <div class="stat-label">p99 retrieval latency</div>
+        </div>
+        <div class="enterprise-stat">
+          <div class="enterprise-stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+          </div>
+          <div class="stat-value">On-prem</div>
+          <div class="stat-label">Deployment available</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── DATA INGESTION ─── -->
+  <section class="ingestion">
+    <div class="ingestion-inner">
+      <div class="ingestion-header">
+        <p class="section-label">Data Sources</p>
+        <h2>Digesting your users &amp; data to memory</h2>
+        <p>Connect 20+ data sources out of the box. Your agents get context from everywhere your users work.</p>
+      </div>
+      <div class="connectors-grid">
+        <div class="connector-cell">
+          <div class="connector-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#1F78FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="connector-name">REST API</span>
+        </div>
+        <div class="connector-cell">
+          <div class="connector-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#1F78FF"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          </div>
+          <span class="connector-name">Google Drive</span>
+        </div>
+        <div class="connector-cell">
+          <div class="connector-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="1.5"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <span class="connector-name">Notion</span>
+        </div>
+        <div class="connector-cell">
+          <div class="connector-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/><path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/><path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z"/><path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z"/><path d="M14 14.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z"/><path d="M14 20.5c0-.83.67-1.5 1.5-1.5h0c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h0c-.83 0-1.5-.67-1.5-1.5z"/><path d="M10 9.5c0 .83-.67 1.5-1.5 1.5h-5C2.67 11 2 10.33 2 9.5S2.67 8 3.5 8h5c.83 0 1.5.67 1.5 1.5z"/><path d="M8 3.5C8 2.67 8.67 2 9.5 2s1.5.67 1.5 1.5S10.33 5 9.5 5 8 4.33 8 3.5z"/></svg>
+          </div>
+          <span class="connector-name">Slack</span>
+        </div>
+        <div class="connector-cell">
+          <div class="connector-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="1.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+          </div>
+          <span class="connector-name">GitHub</span>
+        </div>
+        <div class="connector-cell">
+          <div class="connector-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <span class="connector-name">Intercom</span>
+        </div>
+        <div class="connector-cell">
+          <div class="connector-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="1.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <span class="connector-name">PostgreSQL</span>
+        </div>
+        <div class="connector-cell">
+          <div class="connector-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <span class="connector-name">Gmail</span>
+        </div>
+        <div class="connector-cell">
+          <div class="connector-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="1.5"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+          </div>
+          <span class="connector-name">PDF / Docs</span>
+        </div>
+        <div class="connector-cell">
+          <div class="connector-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+          </div>
+          <span class="connector-name">Web Scrape</span>
+        </div>
+        <div class="connector-cell">
+          <div class="connector-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <span class="connector-name">Confluence</span>
+        </div>
+        <div class="connector-cell">
+          <div class="connector-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          </div>
+          <span class="connector-name">S3 / GCS</span>
+        </div>
+        <div class="connector-cell">
+          <div class="connector-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <span class="connector-name">Webhooks</span>
+        </div>
+        <div class="connector-cell">
+          <div class="connector-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="1.5"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+          </div>
+          <span class="connector-name">Jira</span>
+        </div>
+        <div class="connector-cell">
+          <div class="connector-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          </div>
+          <span class="connector-name">Custom</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PIPELINE ─── -->
+  <section class="pipeline">
+    <div class="pipeline-inner">
+      <p class="section-label">Architecture</p>
+      <h2>From raw data to unforgettable memory in milliseconds</h2>
+      <div class="pipeline-visual">
+        <div class="pipeline-steps">
+          <div class="pipeline-step">
+            <div class="pipeline-step-number">Step 01</div>
+            <div class="pipeline-step-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <h4>Ingest</h4>
+            <p>Raw data from any source&mdash;APIs, files, conversations, databases</p>
+            <div class="pipeline-latency">&lt;50ms intake</div>
+            <div class="pipeline-arrow">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4 2l4 4-4 4" stroke="#1F78FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-number">Step 02</div>
+            <div class="pipeline-step-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            </div>
+            <h4>Process</h4>
+            <p>Auto-chunk, clean, and structure for optimal retrieval</p>
+            <div class="pipeline-latency">&lt;100ms processing</div>
+            <div class="pipeline-arrow">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4 2l4 4-4 4" stroke="#1F78FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-number">Step 03</div>
+            <div class="pipeline-step-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            </div>
+            <h4>Store</h4>
+            <p>Vector embeddings indexed for semantic similarity search</p>
+            <div class="pipeline-latency">&lt;50ms indexing</div>
+            <div class="pipeline-arrow">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4 2l4 4-4 4" stroke="#1F78FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-number">Step 04</div>
+            <div class="pipeline-step-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F78FF" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <h4>Remember</h4>
+            <p>Semantic retrieval returns precisely relevant context to your agent</p>
+            <div class="pipeline-latency">&lt;300ms p99 retrieval</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── METRICS GRID ─── -->
+  <section class="metrics">
+    <div class="metrics-inner">
+      <div class="metrics-header">
+        <p class="section-label">Impact</p>
+        <h2>Memory that transforms your AI product</h2>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <h3>Turn idle users into power users</h3>
+          <p>Agents that remember user preferences, past interactions, and workflow patterns convert free users to paying customers at 3x the rate.</p>
+          <div class="metric-card-stat">
+            <span class="stat-value">3x</span>
+            <span class="stat-label">higher conversion with personalized agents</span>
+          </div>
+        </div>
+        <div class="metric-card">
+          <h3>Memory that scales with your users</h3>
+          <p>From 100 to 10M users&mdash;same API, same latency. Auto-scaling vector infrastructure means you never worry about memory capacity again.</p>
+          <div class="metric-card-stat">
+            <span class="stat-value">10M+</span>
+            <span class="stat-label">concurrent user memories supported</span>
+          </div>
+        </div>
+        <div class="metric-card">
+          <h3>Reduce hallucinations with grounded context</h3>
+          <p>Agents retrieving from verified memory produce 60% fewer hallucinations than those relying solely on parametric knowledge.</p>
+          <div class="metric-card-stat">
+            <span class="stat-value">60%</span>
+            <span class="stat-label">reduction in hallucinated responses</span>
+          </div>
+        </div>
+        <div class="metric-card">
+          <h3>Ship memory in hours, not months</h3>
+          <p>One SDK call replaces months of building custom RAG pipelines, vector DBs, embedding services, and retrieval logic. Focus on your product.</p>
+          <div class="metric-card-stat">
+            <span class="stat-value">4 hrs</span>
+            <span class="stat-label">average integration time</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── WORKS WITH EVERY MODEL ─── -->
+  <section class="models">
+    <div class="models-inner">
+      <div class="models-header">
+        <p class="section-label">Model Agnostic</p>
+        <h2>Works with every model</h2>
+        <p>Swap models without losing memory. Your context layer is independent of inference.</p>
+      </div>
+      <div class="models-grid">
+        <div class="model-cell">
+          <div class="model-cell-icon" style="background: #000; border-radius: 50%;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="12" r="5"/></svg>
+          </div>
+          <span class="model-cell-name">OpenAI</span>
+        </div>
+        <div class="model-cell">
+          <div class="model-cell-icon" style="background: #D4A574; border-radius: 50%;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M12 2L2 19h20L12 2z"/></svg>
+          </div>
+          <span class="model-cell-name">Anthropic</span>
+        </div>
+        <div class="model-cell">
+          <div class="model-cell-icon" style="background: #4285F4; border-radius: 50%;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 3a7 7 0 110 14 7 7 0 010-14z"/></svg>
+          </div>
+          <span class="model-cell-name">Google</span>
+        </div>
+        <div class="model-cell">
+          <div class="model-cell-icon" style="background: #7B2D8E; border-radius: 50%;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+          </div>
+          <span class="model-cell-name">Mistral</span>
+        </div>
+        <div class="model-cell">
+          <div class="model-cell-icon" style="background: #0081FB; border-radius: 50%;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15l-5-5 1.41-1.41L11 14.17l7.59-7.59L20 8l-9 9z"/></svg>
+          </div>
+          <span class="model-cell-name">Meta Llama</span>
+        </div>
+        <div class="model-cell">
+          <div class="model-cell-icon" style="background: #1A1A2E; border-radius: 50%;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M3 3h18v18H3V3zm2 2v14h14V5H5z"/></svg>
+          </div>
+          <span class="model-cell-name">Cohere</span>
+        </div>
+        <div class="model-cell">
+          <div class="model-cell-icon" style="background: #FF6600; border-radius: 50%;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><polygon points="12,2 22,22 2,22"/></svg>
+          </div>
+          <span class="model-cell-name">Together AI</span>
+        </div>
+        <div class="model-cell">
+          <div class="model-cell-icon" style="background: #333; border-radius: 50%;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="12" r="4"/><path d="M12 2v4m0 12v4m10-10h-4M6 12H2m15.07-7.07l-2.83 2.83M9.76 14.24l-2.83 2.83m0-10.14l2.83 2.83m4.48 4.48l2.83 2.83"/></svg>
+          </div>
+          <span class="model-cell-name">Custom / OSS</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PRICING ─── -->
+  <section class="pricing" id="pricing">
+    <div class="pricing-inner">
+      <p class="section-label">Pricing</p>
+      <h2>Simple, usage-based pricing</h2>
+      <p>Start free. Scale as your agents remember more. No hidden fees, no per-seat charges.</p>
+      <div class="pricing-cards">
+        <div class="pricing-card">
+          <div class="pricing-card-label">Developer</div>
+          <div class="pricing-card-price">Free <span>to start</span></div>
+          <div class="pricing-card-desc">For prototyping and small projects</div>
+          <ul class="pricing-features">
+            <li><span class="check">&#10003;</span> 100K tokens/month free</li>
+            <li><span class="check">&#10003;</span> All integrations</li>
+            <li><span class="check">&#10003;</span> Community support</li>
+            <li><span class="check">&#10003;</span> 1 project</li>
+            <li><span class="check">&#10003;</span> REST API + SDK</li>
+          </ul>
+          <button class="btn-secondary" style="width: 100%; justify-content: center;">Start building &rarr;</button>
+        </div>
+        <div class="pricing-card featured">
+          <div class="pricing-card-label">Enterprise</div>
+          <div class="pricing-card-price">$0.01 <span>per 10K tokens</span></div>
+          <div class="pricing-card-desc">For production AI agents at scale</div>
+          <ul class="pricing-features">
+            <li><span class="check">&#10003;</span> Unlimited tokens</li>
+            <li><span class="check">&#10003;</span> All integrations + custom connectors</li>
+            <li><span class="check">&#10003;</span> Dedicated support + SLA</li>
+            <li><span class="check">&#10003;</span> Unlimited projects</li>
+            <li><span class="check">&#10003;</span> SOC 2 compliance</li>
+            <li><span class="check">&#10003;</span> On-prem deployment option</li>
+            <li><span class="check">&#10003;</span> SSO / SAML</li>
+          </ul>
+          <button class="btn-primary" style="width: 100%; justify-content: center;">Talk to sales &rarr;</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TRUSTED BY ─── -->
+  <section class="agents-section">
+    <div class="agents-inner">
+      <div class="agents-header">
+        <p class="section-label">Trusted By</p>
+        <h2 style="font-size: 36px; letter-spacing: -1.8px;">Powering memory for leading AI companies</h2>
+      </div>
+      <div class="agents-grid" style="grid-template-columns: repeat(6, 1fr);">
+        <div class="agent-cell">
+          <img src="https://www.figma.com/api/mcp/asset/17ee1db8-42d1-47d3-98de-80cd4fca7442" alt="Caret">
+        </div>
+        <div class="agent-cell">
+          <img src="https://www.figma.com/api/mcp/asset/19f3a702-9cda-4fe7-a009-6bafe67b0d82" alt="Composio">
+        </div>
+        <div class="agent-cell">
+          <img src="https://www.figma.com/api/mcp/asset/2daaaeac-b98c-44c7-8a83-912b26b8f94f" alt="Cluely">
+        </div>
+        <div class="agent-cell">
+          <img src="https://www.figma.com/api/mcp/asset/d090e42a-70bb-4f17-9a09-914f95f8b46a" alt="Montra">
+        </div>
+        <div class="agent-cell">
+          <img src="https://www.figma.com/api/mcp/asset/351dd9bb-b5b6-48e2-9ef3-f16aeb6d79a8" alt="Motion">
+        </div>
+        <div class="agent-cell">
+          <img src="https://www.figma.com/api/mcp/asset/2c9ddded-5b1b-4a24-b0e3-fa15c064b876" alt="MedTech Vendors">
+        </div>
+        <div class="agent-cell">
+          <img src="https://www.figma.com/api/mcp/asset/0b495eee-98af-449f-bafa-8b47d3fd69c9" alt="perspective">
+        </div>
+        <div class="agent-cell">
+          <img src="https://www.figma.com/api/mcp/asset/4ca4e82c-393e-4876-bff9-2c6c37f648c0" alt="SlothMD">
+        </div>
+        <div class="agent-cell">
+          <img src="https://www.figma.com/api/mcp/asset/2f32a5d3-3247-4d2f-8c4e-be3db894bcfd" alt="scira">
+        </div>
+        <div class="agent-cell">
+          <img src="https://www.figma.com/api/mcp/asset/1c549d07-0581-4cf4-9d2b-eb5c291e8b2c" alt="mixus">
+        </div>
+        <div class="agent-cell">
+          <img src="https://www.figma.com/api/mcp/asset/6cd71614-18c9-4769-b576-e97547e39ce5" alt="ASU">
+        </div>
+        <div class="agent-cell">
+          <span class="agent-text">+ more</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <p class="section-label" style="margin-bottom: 16px;">supermemory</p>
+      <h2>The memory company powering the future of AI</h2>
+      <p>Give your AI agents the memory they deserve. Start building with Supermemory today.</p>
+      <div class="footer-ctas">
+        <button class="btn-primary" onclick="window.location.href='#pricing'">Get started &rarr;</button>
+        <button class="btn-secondary">Read the docs &rarr;</button>
+      </div>
+      <div class="footer-links">
+        <a href="#">Documentation</a>
+        <a href="#">API Reference</a>
+        <a href="#">GitHub</a>
+        <a href="#">Discord</a>
+        <a href="#">Twitter</a>
+        <a href="#">Blog</a>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 Supermemory. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

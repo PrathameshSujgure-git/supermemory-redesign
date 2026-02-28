@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supermemory — The Memory Layer for AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      background: #F5F9FF;
+      color: #0B1015;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      height: 89px;
+      display: flex;
+      align-items: center;
+      padding: 24px 32px;
+      background: rgba(245,249,255,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: box-shadow 0.2s ease;
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      color: #0B1015;
+    }
+
+    .nav-logo .logo-icon {
+      color: #3478F6;
+      font-size: 22px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: #0B1015;
+      letter-spacing: -0.15px;
+      transition: opacity 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      opacity: 0.7;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-shrink: 0;
+    }
+
+    .nav-twitter {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #0B1015;
+      transition: opacity 0.2s ease;
+    }
+
+    .nav-twitter:hover {
+      opacity: 0.7;
+    }
+
+    .nav-twitter svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn-nav {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 10px 22px;
+      border-radius: 100px;
+      border: 1px solid #D1D5DB;
+      background: transparent;
+      color: #0B1015;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav:hover {
+      background: #0B1015;
+      color: #fff;
+      border-color: #0B1015;
+    }
+
+    /* ─── BUTTONS ─── */
+    .btn-primary {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 10px 30px;
+      height: 41px;
+      border-radius: 100px;
+      border: none;
+      background: #0B1015;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    .btn-secondary {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 10px 24px;
+      height: 41px;
+      border-radius: 100px;
+      border: 1px solid #D1D5DB;
+      background: transparent;
+      color: #0B1015;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-secondary:hover {
+      border-color: #0B1015;
+    }
+
+    .btn-full {
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* ─── SECTION LABEL ─── */
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #1F78FF;
+      text-align: center;
+    }
+
+    /* ─── CTA LINK ─── */
+    .cta-link {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      color: #1F78FF;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: gap 0.2s ease;
+    }
+
+    .cta-link:hover {
+      gap: 8px;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      text-align: center;
+      padding: 100px 32px 60px;
+      background: #F5F9FF;
+    }
+
+    .hero-content {
+      max-width: 984px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px;
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 100px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #0B1015;
+      margin-bottom: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .hero-badge:hover {
+      border-color: #3478F6;
+    }
+
+    .hero-badge-dot {
+      width: 12px;
+      height: 12px;
+      background: #3478F6;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .hero-badge-divider {
+      width: 1px;
+      height: 14px;
+      background: #E2E8F0;
+    }
+
+    .hero-badge-text {
+      color: #4A5568;
+    }
+
+    .hero-badge-arrow {
+      color: #3478F6;
+      font-size: 14px;
+    }
+
+    .hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 64px;
+      font-weight: 500;
+      letter-spacing: -3.2px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      color: #0B1015;
+    }
+
+    .hero-subtitle {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: #888E94;
+      max-width: 640px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+      letter-spacing: -0.18px;
+    }
+
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    /* ─── BLUE HERO SECTION ─── */
+    .blue-hero {
+      width: 100%;
+      max-width: 1440px;
+      margin: 0 auto;
+      height: 320px;
+      background-color: #0563F0;
+      background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px);
+      background-size: 20px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .blue-hero-icon {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 100px;
+      color: #fff;
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    /* ─── WHAT WE BUILD (Split Cards) ─── */
+    .split-section {
+      padding: 80px 32px;
+      background: #F5F9FF;
+    }
+
+    .split-section .section-label {
+      margin-bottom: 32px;
+    }
+
+    .cards-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      border: 1px solid #9EC7EF;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #fff;
+    }
+
+    .card {
+      background: linear-gradient(to bottom, #D6E9FF, #F4F9FF);
+      padding: 40px;
+    }
+
+    .card:first-child {
+      border-right: 1px dashed rgba(72,148,224,0.3);
+    }
+
+    .card-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.36px;
+      color: #1F78FF;
+      margin-bottom: 16px;
+    }
+
+    .card-headline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 500;
+      color: #0B1015;
+      letter-spacing: -1.4px;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+
+    .card-body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      color: #888E94;
+      line-height: 1.6;
+      letter-spacing: -0.16px;
+      margin-bottom: 20px;
+    }
+
+    .card-cta {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      color: #1F78FF;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 32px;
+      transition: gap 0.2s ease;
+    }
+
+    .card-cta:hover {
+      gap: 8px;
+    }
+
+    /* ─── STATS GRID ─── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .stat-cell {
+      border: 1px dashed rgba(72,148,224,0.3);
+      padding: 20px;
+      margin-right: -1px;
+      margin-bottom: -1px;
+    }
+
+    .stat-cell.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .stat-cell.tall {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 112px;
+    }
+
+    .stat-cell-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 40px;
+      font-weight: 700;
+      color: #0B1015;
+      letter-spacing: -1px;
+      line-height: 1.1;
+    }
+
+    .stat-cell-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #888E94;
+      margin-top: 4px;
+    }
+
+    .stat-cell-inline {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #0B1015;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-cell-inline svg {
+      width: 18px;
+      height: 18px;
+      color: #1F78FF;
+      flex-shrink: 0;
+    }
+
+    /* ─── PLUGIN GRID ─── */
+    .plugin-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .plugin-cell {
+      border: 1px dashed rgba(72,148,224,0.3);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-right: -1px;
+      margin-bottom: -1px;
+      height: 88px;
+    }
+
+    .plugin-cell img {
+      height: 32px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .plugin-cell-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #0B1015;
+    }
+
+    .plugin-stat-cell {
+      border: 1px dashed rgba(72,148,224,0.3);
+      padding: 20px;
+      margin-top: -1px;
+    }
+
+    /* ─── HOW YOU CONNECT ─── */
+    .connect-section {
+      padding: 80px 32px;
+      background: #F5F9FF;
+    }
+
+    .connect-section .section-label {
+      margin-bottom: 12px;
+    }
+
+    .connect-headline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 36px;
+      font-weight: 500;
+      letter-spacing: -1.8px;
+      line-height: 1.1;
+      color: #0B1015;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .connect-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      border: 1px solid #9EC7EF;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .connect-cell {
+      padding: 32px;
+      height: 280px;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px dashed rgba(72,148,224,0.3);
+    }
+
+    .connect-cell:last-child {
+      border-right: none;
+    }
+
+    .connect-icon {
+      width: 40px;
+      height: 40px;
+      color: #1F78FF;
+      margin-bottom: 20px;
+    }
+
+    .connect-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 500;
+      color: #0B1015;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+
+    .connect-body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #888E94;
+      line-height: 1.6;
+    }
+
+    /* ─── TRUST & SOCIAL PROOF ─── */
+    .trust-section {
+      padding: 80px 32px;
+      background: #F5F9FF;
+    }
+
+    .trust-section .section-label {
+      margin-bottom: 32px;
+    }
+
+    .trust-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      border: 1px solid #9EC7EF;
+    }
+
+    .trust-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: #0B1015;
+      text-align: center;
+      padding: 16px;
+      border-bottom: 1px dashed rgba(72,148,224,0.3);
+      letter-spacing: -0.18px;
+    }
+
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+    }
+
+    .trust-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 88px;
+      border-right: 1px dashed rgba(72,148,224,0.3);
+      border-bottom: 1px dashed rgba(72,148,224,0.3);
+    }
+
+    .trust-cell:nth-child(6n) {
+      border-right: none;
+    }
+
+    .trust-cell:nth-child(n+7) {
+      border-bottom: none;
+    }
+
+    .trust-cell img {
+      height: 28px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    /* ─── TWEETS ─── */
+    .tweets-row {
+      max-width: 1200px;
+      margin: 40px auto 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .tweet-card {
+      border: 1px solid #9EC7EF;
+      background: linear-gradient(to bottom, #D6E9FF, #F4F9FF);
+      padding: 28px;
+      border-radius: 0;
+      position: relative;
+    }
+
+    .tweet-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .tweet-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1F78FF, #3478F6);
+      flex-shrink: 0;
+    }
+
+    .tweet-name {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: #0B1015;
+    }
+
+    .tweet-handle {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #888E94;
+    }
+
+    .tweet-x-icon {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 16px;
+      height: 16px;
+      color: #888E94;
+    }
+
+    .tweet-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: #0B1015;
+      line-height: 1.6;
+    }
+
+    /* ─── WHAT'S NEW ─── */
+    .whats-new-section {
+      padding: 80px 32px;
+      background: #F5F9FF;
+    }
+
+    .whats-new-section .section-label {
+      margin-bottom: 12px;
+    }
+
+    .whats-new-headline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 36px;
+      font-weight: 500;
+      letter-spacing: -1.8px;
+      line-height: 1.1;
+      color: #0B1015;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .whats-new-subtitle {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      color: #888E94;
+      text-align: center;
+      margin-bottom: 40px;
+      letter-spacing: -0.16px;
+    }
+
+    .news-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      border: 1px solid #9EC7EF;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .news-card {
+      padding: 32px;
+      border-right: 1px dashed rgba(72,148,224,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .news-card:last-child {
+      border-right: none;
+    }
+
+    .news-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      color: #1F78FF;
+      letter-spacing: 0.36px;
+      margin-bottom: 12px;
+    }
+
+    .news-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 500;
+      color: #0B1015;
+      letter-spacing: -0.5px;
+      line-height: 1.3;
+      margin-bottom: 12px;
+    }
+
+    .news-date {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #888E94;
+      margin-bottom: 16px;
+    }
+
+    .news-stars {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #888E94;
+      margin-bottom: 16px;
+    }
+
+    .news-link {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: #1F78FF;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: auto;
+      transition: gap 0.2s ease;
+    }
+
+    .news-link:hover {
+      gap: 8px;
+    }
+
+    /* ─── PRICING ─── */
+    .pricing-section {
+      padding: 80px 32px;
+      background: #F5F9FF;
+    }
+
+    .pricing-section .section-label {
+      margin-bottom: 12px;
+    }
+
+    .pricing-headline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 36px;
+      font-weight: 500;
+      letter-spacing: -1.8px;
+      line-height: 1.1;
+      color: #0B1015;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .pricing-subtitle {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      color: #888E94;
+      text-align: center;
+      margin-bottom: 40px;
+      letter-spacing: -0.16px;
+    }
+
+    .pricing-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      border: 1px solid #9EC7EF;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .pricing-col {
+      padding: 40px;
+      border-right: 1px dashed rgba(72,148,224,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pricing-col:last-child {
+      border-right: none;
+    }
+
+    .pricing-col.featured {
+      border-left: 3px solid #1F78FF;
+    }
+
+    .pricing-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      color: #1F78FF;
+      letter-spacing: 0.36px;
+      margin-bottom: 16px;
+    }
+
+    .pricing-price {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .pricing-amount {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: #0B1015;
+      letter-spacing: -1px;
+      line-height: 1.1;
+    }
+
+    .pricing-period {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      color: #888E94;
+    }
+
+    .pricing-pro-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      background: #E8F0FE;
+      border-radius: 100px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #1F78FF;
+      margin-left: 8px;
+    }
+
+    .pricing-desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: #888E94;
+      line-height: 1.5;
+      margin-bottom: 24px;
+      letter-spacing: -0.15px;
+    }
+
+    .pricing-features {
+      list-style: none;
+      margin-bottom: 32px;
+      flex-grow: 1;
+    }
+
+    .pricing-features li {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #0B1015;
+      line-height: 1.5;
+      padding: 8px 0;
+      padding-left: 24px;
+      position: relative;
+    }
+
+    .pricing-features li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 13px;
+      width: 14px;
+      height: 14px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231F78FF' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+
+    .pricing-detail-link {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: #1F78FF;
+      text-align: center;
+      margin-top: 32px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      justify-content: center;
+      transition: gap 0.2s ease;
+    }
+
+    .pricing-detail-link:hover {
+      gap: 8px;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: #0B1015;
+      padding: 64px 32px 32px;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 48px;
+    }
+
+    .footer-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .footer-logo .logo-icon {
+      color: #3478F6;
+    }
+
+    .footer-col-title {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #6B7280;
+      margin-bottom: 16px;
+    }
+
+    .footer-col a {
+      display: block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: #9CA3AF;
+      padding: 4px 0;
+      transition: color 0.2s ease;
+    }
+
+    .footer-col a:hover {
+      color: #fff;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-copyright {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #6B7280;
+    }
+
+    .footer-copyright a {
+      color: #6B7280;
+      transition: color 0.2s ease;
+    }
+
+    .footer-copyright a:hover {
+      color: #9CA3AF;
+    }
+
+    .footer-socials {
+      display: flex;
+      gap: 8px;
+    }
+
+    .footer-social-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9CA3AF;
+      transition: all 0.2s ease;
+    }
+
+    .footer-social-icon:hover {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+    }
+
+    .footer-social-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .hero h1 {
+        font-size: 48px;
+        letter-spacing: -2px;
+      }
+
+      .connect-headline,
+      .whats-new-headline,
+      .pricing-headline {
+        font-size: 40px;
+        letter-spacing: -2px;
+      }
+
+      .cards-container {
+        grid-template-columns: 1fr;
+      }
+
+      .card:first-child {
+        border-right: none;
+        border-bottom: 1px dashed rgba(72,148,224,0.3);
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .trust-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .trust-cell:nth-child(3n) {
+        border-right: none;
+      }
+
+      .trust-cell:nth-child(6n):not(:nth-child(3n)) {
+        border-right: 1px dashed rgba(72,148,224,0.3);
+      }
+
+      .trust-cell:nth-child(n+7) {
+        border-bottom: 1px dashed rgba(72,148,224,0.3);
+      }
+
+      .trust-cell:nth-child(n+10) {
+        border-bottom: none;
+      }
+
+      .connect-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .connect-cell {
+        border-bottom: 1px dashed rgba(72,148,224,0.3);
+      }
+
+      .connect-cell:nth-child(2n) {
+        border-right: none;
+      }
+
+      .connect-cell:nth-child(n+3) {
+        border-bottom: none;
+      }
+
+      .tweets-row {
+        grid-template-columns: 1fr;
+        max-width: 600px;
+      }
+
+      .news-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .news-card {
+        border-right: none;
+        border-bottom: 1px dashed rgba(72,148,224,0.3);
+      }
+
+      .news-card:last-child {
+        border-bottom: none;
+      }
+
+      .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pricing-col {
+        border-right: none;
+        border-bottom: 1px dashed rgba(72,148,224,0.3);
+      }
+
+      .pricing-col:last-child {
+        border-bottom: none;
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 16px 20px;
+        height: 64px;
+      }
+
+      .hero {
+        padding: 60px 20px 40px;
+      }
+
+      .hero h1 {
+        font-size: 36px;
+        letter-spacing: -1.5px;
+      }
+
+      .hero-subtitle {
+        font-size: 16px;
+      }
+
+      .hero-ctas {
+        flex-direction: column;
+      }
+
+      .blue-hero {
+        height: 300px;
+      }
+
+      .blue-hero-icon {
+        font-size: 80px;
+      }
+
+      .connect-headline,
+      .whats-new-headline,
+      .pricing-headline {
+        font-size: 32px;
+        letter-spacing: -1.5px;
+      }
+
+      .connect-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .connect-cell {
+        border-right: none;
+        height: auto;
+      }
+
+      .connect-cell:last-child {
+        border-bottom: none;
+      }
+
+      .trust-section {
+        padding: 64px 16px 32px;
+      }
+
+      .trust-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .plugin-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 30px;
+        letter-spacing: -1px;
+      }
+
+      .card {
+        padding: 24px;
+      }
+
+      .pricing-col {
+        padding: 24px;
+      }
+
+      .pricing-amount {
+        font-size: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAV ─── -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="nav-logo"><span class="logo-icon">&#x22B9;</span> supermemory</a>
+      <ul class="nav-links">
+        <li><a href="#">Enterprise</a></li>
+        <li><a href="#">Plugins</a></li>
+        <li><a href="#">Nova</a></li>
+        <li><a href="#">Docs</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Pricing</a></li>
+      </ul>
+      <div class="nav-right">
+        <a href="#" class="nav-twitter">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          20K
+        </a>
+        <button class="btn-nav">Get Started &rarr;</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ─── HERO ─── -->
+  <section class="hero">
+    <div class="hero-content">
+      <a href="#" class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        <span style="font-weight:600;color:#0B1015">Research</span>
+        <span class="hero-badge-divider"></span>
+        <span class="hero-badge-text">Supermemory is now the best memory provider (Benchmark)</span>
+        <span class="hero-badge-arrow">&rarr;</span>
+      </a>
+      <h1>Your AI isn't intelligent<br>until it remembers</h1>
+      <p class="hero-subtitle">Supermemory is the memory layer for AI. Give your agents persistent memory, connect your knowledge across tools, and ship products that actually learn.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary">Explore Enterprise</button>
+        <button class="btn-secondary">Explore Plugins</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── BLUE HERO VISUAL ─── -->
+  <section class="blue-hero">
+    <div class="blue-hero-icon">&#x22B9;</div>
+  </section>
+
+  <!-- ─── WHAT WE BUILD ─── -->
+  <section class="split-section">
+    <div class="section-label">WHAT WE BUILD</div>
+    <div class="cards-container">
+
+      <!-- ENTERPRISE CARD -->
+      <div class="card">
+        <div class="card-label">ENTERPRISE</div>
+        <h3 class="card-headline">Ship AI products that remember</h3>
+        <p class="card-body">Deploy memory infrastructure on your cloud. State-of-the-art RAG, user profiles, and connectors &mdash; SOC2 compliant, &lt;300ms latency. Works with any model.</p>
+        <a href="#" class="card-cta">Supermemory for Enterprise &rarr;</a>
+
+        <div class="stats-grid">
+          <div class="stat-cell tall">
+            <div class="stat-cell-value">&lt;300ms</div>
+            <div class="stat-cell-label">p95 latency</div>
+          </div>
+          <div class="stat-cell tall">
+            <div class="stat-cell-inline">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              Custom connectors
+            </div>
+          </div>
+          <div class="stat-cell tall">
+            <div class="stat-cell-value">5B+</div>
+            <div class="stat-cell-label">tokens processed daily</div>
+          </div>
+          <div class="stat-cell tall">
+            <div class="stat-cell-inline">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              On-prem or hybrid
+            </div>
+          </div>
+          <div class="stat-cell full-width">
+            <div class="stat-cell-inline">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              SOC Type II
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLUGINS CARD -->
+      <div class="card">
+        <div class="card-label">PLUGINS</div>
+        <h3 class="card-headline">One memory across every AI tool you use</h3>
+        <p class="card-body">What you teach Claude Code, Cursor remembers. Install a plugin and your context flows between every AI tool &mdash; what one learns, they all know.</p>
+        <a href="#" class="card-cta">Supermemory Plugins &rarr;</a>
+
+        <div class="plugin-grid">
+          <div class="plugin-cell">
+            <img src="https://www.figma.com/api/mcp/asset/d22062aa-d8c1-4c07-8a14-b52d517c261f" alt="OpenClaw Plugin">
+            <span class="plugin-cell-label">OpenClaw Plugin</span>
+          </div>
+          <div class="plugin-cell">
+            <img src="https://www.figma.com/api/mcp/asset/3a60b543-2cf5-4779-8a57-34a4d1b78235" alt="Claude Code Plugin">
+            <span class="plugin-cell-label">Claude Code Plugin</span>
+          </div>
+          <div class="plugin-cell">
+            <img src="https://www.figma.com/api/mcp/asset/c831d077-e934-4887-b46c-05c396426c90" alt="OpenCode Plugin">
+            <span class="plugin-cell-label">OpenCode Plugin</span>
+          </div>
+        </div>
+
+        <div class="plugin-stat-cell">
+          <div class="stat-cell-value">10,000+</div>
+          <div class="stat-cell-label">developers &amp; power users</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── HOW YOU CONNECT ─── -->
+  <section class="connect-section">
+    <div class="section-label">HOW YOU CONNECT</div>
+    <h2 class="connect-headline">Every way into your memory layer</h2>
+    <div class="connect-grid">
+
+      <!-- Cell 1: AI Tool Plugins -->
+      <div class="connect-cell">
+        <svg class="connect-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="16 18 22 12 16 6"></polyline>
+          <polyline points="8 6 2 12 8 18"></polyline>
+        </svg>
+        <div class="connect-title">AI Tool Plugins</div>
+        <p class="connect-body">Native plugins for Claude Code, OpenCode, OpenClaw, and 100+ AI tools. Install once, memory everywhere.</p>
+      </div>
+
+      <!-- Cell 2: Chrome Extension -->
+      <div class="connect-cell">
+        <svg class="connect-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+        <div class="connect-title">Chrome Extension</div>
+        <p class="connect-body">Save anything from the web to your memory. Articles, docs, conversations &mdash; one click to remember.</p>
+      </div>
+
+      <!-- Cell 3: Connections -->
+      <div class="connect-cell">
+        <svg class="connect-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </svg>
+        <div class="connect-title">Connections</div>
+        <p class="connect-body">Connect Notion, Slack, Google Drive, and more. Your existing knowledge flows into your memory layer automatically.</p>
+      </div>
+
+      <!-- Cell 4: Developer Docs -->
+      <div class="connect-cell">
+        <svg class="connect-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="4 17 10 11 4 5"></polyline>
+          <line x1="12" y1="19" x2="20" y2="19"></line>
+        </svg>
+        <div class="connect-title">Developer Docs</div>
+        <p class="connect-body">Full API and SDK for building memory into your own products. Setup in 5 minutes. Works with any model.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── TRUST & SOCIAL PROOF ─── -->
+  <section class="trust-section">
+    <div class="section-label">TRUSTED BY</div>
+
+    <!-- Logo bar -->
+    <div class="trust-container">
+      <div class="trust-label">Trusted by developers, enterprises, and AI agents</div>
+      <div class="trust-grid">
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/17ee1db8-42d1-47d3-98de-80cd4fca7442" alt="Caret"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/19f3a702-9cda-4fe7-a009-6bafe67b0d82" alt="Composio"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/2daaaeac-b98c-44c7-8a83-912b26b8f94f" alt="Cluely"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/d090e42a-70bb-4f17-9a09-914f95f8b46a" alt="Montra"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/351dd9bb-b5b6-48e2-9ef3-f16aeb6d79a8" alt="Motion"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/2c9ddded-5b1b-4a24-b0e3-fa15c064b876" alt="MedTech Vendors"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/0b495eee-98af-449f-bafa-8b47d3fd69c9" alt="perspective"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/4ca4e82c-393e-4876-bff9-2c6c37f648c0" alt="SlothMD"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/2f32a5d3-3247-4d2f-8c4e-be3db894bcfd" alt="scira"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/1c549d07-0581-4cf4-9d2b-eb5c291e8b2c" alt="mixus"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/6cd71614-18c9-4769-b576-e97547e39ce5" alt="ASU"></div>
+        <div class="trust-cell"><img src="https://www.figma.com/api/mcp/asset/1a92a034-1530-4844-94a2-74a7e6af4b1b" alt="P icon"></div>
+      </div>
+    </div>
+
+    <!-- Tweets -->
+    <div class="tweets-row">
+      <div class="tweet-card">
+        <svg class="tweet-x-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        <div class="tweet-header">
+          <div class="tweet-avatar"></div>
+          <div>
+            <div class="tweet-name">Dhravya Shah</div>
+            <div class="tweet-handle">@dhravya</div>
+          </div>
+        </div>
+        <p class="tweet-text">I installed supermemory for Claude Code and I'm SOLD. My context persists across sessions &mdash; it literally remembers what I was working on yesterday.</p>
+      </div>
+      <div class="tweet-card">
+        <svg class="tweet-x-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        <div class="tweet-header">
+          <div class="tweet-avatar"></div>
+          <div>
+            <div class="tweet-name">Alex Johnson</div>
+            <div class="tweet-handle">@alexj_dev</div>
+          </div>
+        </div>
+        <p class="tweet-text">We switched our RAG pipeline to supermemory. &lt;300ms retrieval, handles millions of user profiles, and we deployed on our own cloud. Enterprise AI memory, solved.</p>
+      </div>
+      <div class="tweet-card">
+        <svg class="tweet-x-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        <div class="tweet-header">
+          <div class="tweet-avatar"></div>
+          <div>
+            <div class="tweet-name">Sarah Chen</div>
+            <div class="tweet-handle">@sarahcodes</div>
+          </div>
+        </div>
+        <p class="tweet-text">The fact that what I teach Claude Code automatically shows up in my Cursor context is insane. This is what cross-agent memory should feel like.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── WHAT'S NEW ─── -->
+  <section class="whats-new-section">
+    <div class="section-label">WHAT'S NEW</div>
+    <h2 class="whats-new-headline">Shipping every week</h2>
+    <p class="whats-new-subtitle">We move fast. Here's the latest.</p>
+
+    <div class="news-grid">
+      <div class="news-card">
+        <div class="news-tag">BLOG</div>
+        <h3 class="news-title">Why every AI agent needs a memory layer</h3>
+        <div class="news-date">Feb 24, 2026</div>
+        <a href="#" class="news-link">Read post &rarr;</a>
+      </div>
+      <div class="news-card">
+        <div class="news-tag">BENCHMARK</div>
+        <h3 class="news-title">Supermemory tops memory retrieval benchmarks</h3>
+        <div class="news-date">Feb 20, 2026</div>
+        <a href="#" class="news-link">See results &rarr;</a>
+      </div>
+      <div class="news-card">
+        <div class="news-tag">OPEN SOURCE</div>
+        <h3 class="news-title">supermemory/sdk &mdash; now on GitHub</h3>
+        <div class="news-stars">&#11088; 2.4k stars</div>
+        <a href="#" class="news-link">View repo &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PRICING ─── -->
+  <section class="pricing-section">
+    <div class="section-label">PRICING</div>
+    <h2 class="pricing-headline">Simple, transparent pricing</h2>
+    <p class="pricing-subtitle">Start free. Scale as you grow.</p>
+
+    <div class="pricing-grid">
+
+      <!-- Plugins (Featured) -->
+      <div class="pricing-col featured">
+        <div class="pricing-label">Plugins</div>
+        <div class="pricing-price">
+          <span class="pricing-amount">$19</span>
+          <span class="pricing-period">/mo</span>
+        </div>
+        <p class="pricing-desc">Cross-agent memory for every AI tool you use</p>
+        <ul class="pricing-features">
+          <li>Memory syncs across Claude Code, Cursor, OpenCode &amp; more</li>
+          <li>Personal knowledge layer</li>
+          <li>Chrome extension included</li>
+          <li>Priority support</li>
+        </ul>
+        <button class="btn-primary btn-full">Get Plugins &rarr;</button>
+      </div>
+
+      <!-- Nova -->
+      <div class="pricing-col">
+        <div class="pricing-label">Nova</div>
+        <div class="pricing-price">
+          <span class="pricing-amount">Free</span>
+          <span class="pricing-pro-badge">Pro $9/mo</span>
+        </div>
+        <p class="pricing-desc">Your AI second brain</p>
+        <ul class="pricing-features">
+          <li>Save anything from the web</li>
+          <li>AI-powered search &amp; retrieval</li>
+          <li>Organize with collections</li>
+          <li>Share with your team</li>
+        </ul>
+        <button class="btn-secondary btn-full">Try Nova</button>
+      </div>
+
+      <!-- Enterprise -->
+      <div class="pricing-col">
+        <div class="pricing-label">Enterprise</div>
+        <div class="pricing-price">
+          <span class="pricing-amount">Custom</span>
+        </div>
+        <p class="pricing-desc">Memory infrastructure at scale</p>
+        <ul class="pricing-features">
+          <li>Deploy on your cloud</li>
+          <li>SOC Type II compliant</li>
+          <li>Custom connectors &amp; extractors</li>
+          <li>Dedicated support &amp; SLA</li>
+          <li>Unlimited tokens</li>
+        </ul>
+        <button class="btn-secondary btn-full">Talk to Sales &rarr;</button>
+      </div>
+
+    </div>
+
+    <div style="text-align:center;">
+      <a href="#" class="pricing-detail-link">See detailed pricing &rarr;</a>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <div class="footer-logo"><span class="logo-icon">&#x22B9;</span> supermemory</div>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Products</div>
+          <a href="#">Enterprise</a>
+          <a href="#">Plugins</a>
+          <a href="#">Nova</a>
+          <a href="#">Pricing</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Resources</div>
+          <a href="#">Docs</a>
+          <a href="#">Blog</a>
+          <a href="#">Research</a>
+          <a href="#">Changelog</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Company</div>
+          <a href="#">About</a>
+          <a href="#">Careers</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copyright">&copy; 2025 Supermemory &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></div>
+        <div class="footer-socials">
+          <a href="#" class="footer-social-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="#" class="footer-social-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+          <a href="#" class="footer-social-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
