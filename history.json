@@ -118,5 +118,35 @@
     "file": "snapshots/v7-visual-refinement.html",
     "date": "2026-02-28T19:45:00+05:30",
     "page": "Homepage"
+  },
+  {
+    "id": "v8-homepage",
+    "title": "Homepage — Style System v2 Applied",
+    "description": "Homepage updated with style.md v2 design system. Copied from visual-refinement workspace. Blocky grid-based layout with dashed side borders, zero border-radius everywhere, unified button style (#fafafa bg, rgba(72,148,224,0.3) border), badge with #DEEBFF bg and layered square dot, trust section in solid #9EC7EF container, manifesto+products bordered container, em-dash pricing lists, square step numbers, dark footer.",
+    "figmaNode": "153:4710",
+    "figmaUrl": "https://www.figma.com/design/SJH60WH8nO7STa3SHjYvER/Supermemory-Revamp?node-id=153-4710",
+    "file": "snapshots/v8-homepage.html",
+    "date": "2026-03-02T12:00:00+05:30",
+    "page": "Homepage"
+  },
+  {
+    "id": "v8-enterprise",
+    "title": "Enterprise Page — Style System v2 Applied",
+    "description": "Enterprise page rewritten with style.md v2. Wrapped in .page-grid container with dashed borders. All buttons unified to single blocky style. All border-radius set to 0 (code blocks, dots, pills, icons). Old border colors (#D1D5DB, #E2E8F0) replaced with rgba(72,148,224,0.3). Section label letter-spacing 0.36px. Pricing list items use em-dash prefix. Nav updated to g-nav pattern with text logo. Footer matches visual-refinement dark style. Page bg #F5F9FF throughout.",
+    "figmaNode": "153:4710",
+    "figmaUrl": "https://www.figma.com/design/SJH60WH8nO7STa3SHjYvER/Supermemory-Revamp?node-id=153-4710",
+    "file": "snapshots/v8-enterprise.html",
+    "date": "2026-03-02T12:00:00+05:30",
+    "page": "Enterprise"
+  },
+  {
+    "id": "v8-plugins",
+    "title": "Plugins Page — Style System v2 Applied",
+    "description": "Plugins page rewritten with style.md v2. Wrapped in .page-grid container with dashed borders. All buttons unified to single blocky style. All border-radius set to 0 (install cmd, demo terminal, tool logos, badges, step numbers). Old border colors replaced. Badge uses #DEEBFF bg with layered square dot. Step numbers: 28x28 square with #9EC7EF border. Pricing em-dash prefix. Nav updated to g-nav pattern. Footer matches visual-refinement dark style.",
+    "figmaNode": "153:4710",
+    "figmaUrl": "https://www.figma.com/design/SJH60WH8nO7STa3SHjYvER/Supermemory-Revamp?node-id=153-4710",
+    "file": "snapshots/v8-plugins.html",
+    "date": "2026-03-02T12:00:00+05:30",
+    "page": "Plugins"
   }
 ]
